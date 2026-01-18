@@ -9,7 +9,8 @@ defmodule Dero.Build do
             start_permanent: Mix.env() == :prod,
             deps: [
                 {:libcluster, "~> 3.4"},
-                {:horde, "~> 0.9.0"}
+                {:horde, "~> 0.9.0"},
+                {:cowboy, "~> 2.10"}
             ]
         ]
     end
@@ -17,7 +18,7 @@ defmodule Dero.Build do
     def application do
         [
             extra_applications: [:logger],
-            mod: {Dero.Main, []}
+            mod: {Dero.Main.Startup, []}
         ]
     end
 end

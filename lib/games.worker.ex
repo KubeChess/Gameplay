@@ -1,4 +1,4 @@
-defmodule Dero.Worker do
+defmodule Dero.Games.Worker do
     use GenServer
 
     def start_link(name) do
@@ -8,7 +8,7 @@ defmodule Dero.Worker do
 
     @impl true
     def init(state) do
-        IO.puts("Dero.Worker started with state: #{inspect(state)} on node #{Node.self()}")
+        IO.puts("Dero.Games.Worker started with state: #{inspect(state)} on node #{Node.self()}")
         {:ok, state}
     end
 
