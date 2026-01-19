@@ -1,0 +1,40 @@
+#------------------------------------------------------#
+#                         COMPILE                      #
+#------------------------------------------------------#
+
+FROM elixir:1.19-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache build-base
+
+COPY mix.exs mix.lock ./
+
+RUN mix local.hex --force && \
+    mix local.rebar --force && \
+    mix deps.get && \
+    mix deps.compile
+
+COPY lib ./lib
+
+RUN MIX_ENV=prod mix compile && \
+    MIX_ENV=prod mix release
+
+
+#------------------------------------------------------#
+#                         RUNTIME                      #
+#------------------------------------------------------#
+
+FROM alpine:latest
+
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+COPY --from=0 /app/_build/prod/rel/dero ./
+
+ENV MIX_ENV=prod
+
+EXPOSE 80 4369
+
+CMD ["bin/dero", "start"]

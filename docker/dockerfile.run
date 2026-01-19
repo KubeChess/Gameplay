@@ -1,0 +1,13 @@
+FROM alpine:latest
+
+RUN apk add --no-cache openssl
+
+WORKDIR /app
+
+COPY --from=0 /app/_build/prod/rel/dero ./
+
+ENV MIX_ENV=prod
+
+EXPOSE 80 4369
+
+CMD ["bin/dero", "start"]
