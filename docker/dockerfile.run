@@ -11,7 +11,6 @@ ENV port=80
 ENV strategy="kubernetes"
 
 ENV MIX_ENV=prod
-ENV ERL_AFLAGS="-kernel inet_dist_use_interface {0,0,0,0}"
 
 EXPOSE 80 4369
 

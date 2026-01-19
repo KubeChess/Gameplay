@@ -39,7 +39,6 @@ COPY --from=0 /app/_build/prod/rel/dero ./
 ENV port=80
 ENV strategy="kubernetes"
 
-ENV ERL_AFLAGS="-kernel inet_dist_use_interface {0,0,0,0}"
 ENV MIX_ENV=prod
 
 EXPOSE 80 4369
