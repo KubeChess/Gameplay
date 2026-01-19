@@ -6,16 +6,15 @@ FROM elixir:1.19-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache build-base
+COPY mix.exs ./
+COPY lib ./
 
-COPY mix.exs mix.lock ./
+RUN apk add --no-cache build-base
 
 RUN mix local.hex --force && \
     mix local.rebar --force && \
     mix deps.get && \
     mix deps.compile
-
-COPY lib ./lib
 
 RUN MIX_ENV=prod mix compile && \
     MIX_ENV=prod mix release
