@@ -11,29 +11,29 @@ defmodule Dero.Main.Startup do
     end
 
     defp cluster_strategy do
-        case Mix.env() do
-            :dev -> Cluster.Strategy.LocalEpmd
-            _ -> Cluster.Strategy.Kubernetes.DNS
+        case System.get_env("strategy", "local") do
+            "local" -> Cluster.Strategy.LocalEpmd
+            "kubernetes" -> Cluster.Strategy.Kubernetes.DNS
+            _ -> raise "Unknown clustering strategy"
         end
     end
 
     defp cluster_config do
-        case Mix.env() do
-            :dev -> []
-            _ ->
+        case System.get_env("strategy", "local") do
+            "local" -> []
+            "kubernetes" ->
                 [
                     service: "dero-cluster",
                     namespace: "clusterchess-backend",
                     polling_interval: 10_000
                 ]
+            _ -> raise "Unknown clustering strategy"
         end
     end
 
     defp ports do
-        case Mix.env() do
-            :dev -> [port: 4000]
-            _ -> [port: 80, ip: {0, 0, 0, 0}]
-        end
+        port = String.to_integer(System.get_env("port", "4000"))
+        [port: port, ip: {0, 0, 0, 0}]
     end
 
     defp router do

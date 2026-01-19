@@ -4,7 +4,7 @@ RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-COPY --from=0 /app/_build/prod/rel/dero ./
+COPY _build/prod/rel/dero /app/_build/prod/rel/dero ./
 
 ENV MIX_ENV=prod
 

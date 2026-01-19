@@ -2,3 +2,4 @@ _build/*
 deps/*
 .elixir_ls/*
 *.lock
+*.dump

@@ -26,6 +26,9 @@ RUN MIX_ENV=prod mix compile && \
 
 FROM alpine:latest
 
+ENV port=80
+ENV strategy="kubernetes"
+
 RUN apk add --no-cache \
     openssl            \
     ncurses-libs       \
@@ -40,4 +43,4 @@ ENV MIX_ENV=prod
 
 EXPOSE 80 4369
 
-CMD ["bin/dero", "start"]
+CMD ["bin/dero", "start_iex"]
