@@ -43,4 +43,4 @@ ENV MIX_ENV=prod
 
 EXPOSE 80 4369
 
-CMD ["bin/dero", "start_iex"]
+CMD ["bin/dero", "start"]
