@@ -7,7 +7,7 @@ FROM elixir:1.19-alpine
 WORKDIR /app
 
 COPY mix.exs ./
-COPY lib ./
+COPY lib ./lib
 
 RUN apk add --no-cache build-base
 
