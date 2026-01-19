@@ -23,8 +23,9 @@ defmodule Dero.Main.Startup do
             "local" -> []
             "kubernetes" ->
                 [
-                    service: "dero-cluster",
+                    service: "clusterchess-backend-hl",
                     namespace: "clusterchess-backend",
+                    application_name: "backend",
                     polling_interval: 10_000
                 ]
             _ -> raise "Unknown clustering strategy"
