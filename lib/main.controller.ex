@@ -1,11 +1,11 @@
-defmodule Dero.Main.Controller do
+defmodule ClusterChess.Main.Controller do
 
     def launch(name) do
         Horde.DynamicSupervisor.start_child(
             :cluster_processes_supervisor,
             %{
                 id: name,
-                start: {Dero.Games.Worker, :start_link, [name]},
+                start: {ClusterChess.MatchMaking.Queue, :start_link, [name]},
                 restart: :transient
             }
         )
@@ -33,7 +33,6 @@ defmodule Dero.Main.Controller do
         GenServer.call(
             {:via, Horde.Registry, {:cluster_registry, name}},
             message
-    )
+        )
     end
-
 end

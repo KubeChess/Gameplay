@@ -1,9 +1,38 @@
-defmodule Dero.Main.Startup do
+defmodule ClusterChess.Main.Startup do
     use Application
+
+    @impl Application
+    def start(_type, _args) do
+        Supervisor.start_link(children(), strategy: :one_for_one)
+    end
+
+    defp children do
+        [
+            {Cluster.Supervisor, [
+                cluster(),
+                [name: :cluster_nodes_supervisor]
+            ]},
+            {Horde.Registry, [
+                name: :cluster_registry,
+                keys: :unique,
+                members: :auto
+            ]},
+            {Horde.DynamicSupervisor, [
+                name: :cluster_processes_supervisor,
+                strategy: :one_for_one,
+                members: :auto
+            ]},
+            {Bandit, [
+                port: String.to_integer(System.get_env("port", "4000")),
+                ip: {0, 0, 0, 0},
+                plug: ClusterChess.Main.Router
+            ]}
+        ]
+    end
 
     defp cluster do
         [
-            dero_cluster: [
+            main_cluster: [
                 strategy: cluster_strategy(),
                 config: cluster_config()
             ]
@@ -30,43 +59,5 @@ defmodule Dero.Main.Startup do
                 ]
             _ -> raise "Unknown clustering strategy"
         end
-    end
-
-    defp ports do
-        port = String.to_integer(System.get_env("port", "4000"))
-        [port: port, ip: {0, 0, 0, 0}]
-    end
-
-    defp router do
-        :cowboy_router.compile([
-            {:_, [
-                {"/ws", Dero.Games.WebSockets, []}
-            ]}
-        ])
-    end
-
-    defp children do
-        [
-            {Cluster.Supervisor, [
-                cluster(), [name: :cluster_nodes_supervisor]
-            ]},
-            {Horde.Registry, [name: :cluster_registry, keys: :unique, members: :auto]},
-            {Horde.DynamicSupervisor, [
-                name: :cluster_processes_supervisor,
-                strategy: :one_for_one,
-                members: :auto
-            ]},
-            %{
-                id: :http,
-                start: {:cowboy, :start_clear, [
-                    :http, ports(), %{env: %{dispatch: router()}}
-                ]}
-            }
-        ]
-    end
-
-    @impl true
-    def start(_type, _args) do
-        Supervisor.start_link(children(), strategy: :one_for_one)
     end
 end
