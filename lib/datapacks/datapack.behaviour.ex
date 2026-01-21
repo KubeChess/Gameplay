@@ -1,4 +1,4 @@
 defmodule ClusterChess.Datapack.Behaviour do
-  @callback encode(struct()) :: String.t()
-  @callback decode(String.t()) :: struct()
+    @callback encode(struct()) :: String.t()
+    @callback decode(String.t()) :: struct()
 end

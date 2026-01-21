@@ -1,4 +1,5 @@
 defmodule ClusterChess.Main.Router do
+
     use Plug.Router
 
     alias Plug.Conn
@@ -8,7 +9,7 @@ defmodule ClusterChess.Main.Router do
     plug :match
     plug :dispatch
 
-    get "/games", do: authorize_before(conn, upgrade_to_socket(Matchmaking))
+    get "/ws/queue", do: authorize_before(conn, upgrade_to_socket(Matchmaking))
     match _, do: send_resp(conn, 404, "Endpoint Not found in #{__MODULE__}")
 
     def authorize_before(conn, callback) do

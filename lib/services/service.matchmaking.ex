@@ -1,4 +1,5 @@
 defmodule ClusterChess.Play.Queue do
+
     use GenServer
 
     def start_link(name) do

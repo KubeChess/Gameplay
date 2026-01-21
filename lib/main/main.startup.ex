@@ -1,4 +1,5 @@
 defmodule ClusterChess.Main.Startup do
+
     use Application
 
     @impl Application
