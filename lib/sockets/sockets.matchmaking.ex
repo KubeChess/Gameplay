@@ -1,4 +1,4 @@
-defmodule ClusterChess.Main.Sockets do
+defmodule ClusterChess.Sockets.Matchmaking do
     @behaviour WebSock
 
     @impl WebSock
@@ -25,7 +25,17 @@ defmodule ClusterChess.Main.Sockets do
     end
 
     @impl WebSock
-    def handle_info(_message, state) do
+    def handle_info({:forward, message}, state) do
+        {:reply, :ok, {:text, "Forwarded message: #{message}"}, state}
+    end
+
+    @impl WebSock
+    def handle_info(message, state) do
+        IO.puts("------------------------------------------")
+        IO.puts("Received info message: #{inspect(message)}")
+        IO.puts("Current state: #{inspect(state)}")
+        IO.puts("Current process: #{self()}")
+        IO.puts("------------------------------------------")
         {:ok, state}
     end
 

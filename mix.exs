@@ -13,7 +13,8 @@ defmodule ClusterChess.Build do
                 {:joken, "~> 2.6"},
                 {:bandit, "~> 1.0"},
                 {:websock, "~> 0.5"},
-                {:plug, "~> 1.14"}
+                {:plug, "~> 1.14"},
+                {:jason, "~> 1.4"}
             ]
         ]
     end
