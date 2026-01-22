@@ -1,4 +1,5 @@
 defmodule ClusterChess.Sockets.Default do
+  alias ClusterChess.Sockets.Commons
     defmacro __using__(_opts) do
         quote do
             @behaviour WebSock
@@ -14,12 +15,12 @@ defmodule ClusterChess.Sockets.Default do
             def handle_in({message, [opcode: opcode]}, state) do
                 with {:ok, decoded} <- Commons.decode(message, opcode),
                      {:ok, msgtype} <- Map.fetch(decoded, "type"),
-                     {:ok, xr, xs}  <- process(msgtype, decoded, state)
+                     {:ok, xr, new_state}  <- process(msgtype, decoded, state)
                 do
-                    {:reply, :ok, {opcode, Commons.encode!(xr, opcode)}, xs}
+                    {:reply, :ok, {opcode, Commons.encode!(xr, opcode)}, new_state}
                 else
-                    {:error, reason, xs} -> {:reply, :ok, {opcode, Commons.error!(reason, opcode)}, xs}
-                    _ -> {:reply, :ok, {opcode, Commons.error!("Illformed", opcode)}, state}
+                    {:error, reason, new_state} -> Commons.error(reason, opcode, new_state)
+                    _ -> Commons.error("Invalid message format", opcode, state)
                 end
             end
 
