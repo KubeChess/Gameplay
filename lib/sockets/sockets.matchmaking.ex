@@ -17,7 +17,8 @@ defmodule ClusterChess.Sockets.Matchmaking do
 
     @impl Behaviour
     def process(opcode, msg, state) when opcode in @opcodes do
-        with {:ok, _auth} <- Validation.validate_token(msg["token"]),
+        with {:ok, token} <- Map.fetch(msg, "token"),
+             {:ok, _auth} <- Validation.validate_token(token),
              {:ok, queue} <- Queue.enforce(msg),
              {:ok, mmkey} <- Queue.getkey(queue)
         do
