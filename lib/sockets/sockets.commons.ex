@@ -27,6 +27,9 @@ defmodule ClusterChess.Sockets.Commons do
     def encode!(data, :text),    do: Jason.encode!(data)
     def encode!(data, :binary),  do: Msgpax.pack!(data)
 
+    def resp(msg, opcode, state \\ %{}),
+        do: {:reply, :ok, {opcode, msg}, state}
+
     def error(reason, opcode, state \\ %{}),
         do: {:reply, :ok, {opcode, error_helper(reason, opcode)}, state}
 

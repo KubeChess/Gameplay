@@ -8,19 +8,19 @@ defmodule ClusterChess.Sockets.Default do
             alias ClusterChess.Sockets.Commons
 
             @impl WebSock
-            def handle_in({_msg, [opcode: opcode]}, state)
-                when (opcode not in [:text, :binary]), do: {:ok, state}
+            def handle_in({_msg, [opcode: protocol]}, state)
+                when (protocol not in [:text, :binary]), do: {:ok, state}
 
             @impl WebSock
-            def handle_in({message, [opcode: opcode]}, state) do
-                with {:ok, decoded} <- Commons.decode(message, opcode),
+            def handle_in({message, [opcode: protocol]}, state) do
+                with {:ok, decoded} <- Commons.decode(message, protocol),
                      {:ok, msgtype} <- Map.fetch(decoded, "type"),
-                     {:ok, xr, new_state}  <- process(msgtype, decoded, state)
+                     {:ok, response, new_state}  <- process(msgtype, decoded, state)
                 do
-                    {:reply, :ok, {opcode, Commons.encode!(xr, opcode)}, new_state}
+                    Commons.encode!(response, protocol) |> Commons.resp(protocol, new_state)
                 else
-                    {:error, reason, new_state} -> Commons.error(reason, opcode, new_state)
-                    _ -> Commons.error("Invalid message format", opcode, state)
+                    {:error, reason, new_state} -> Commons.error(reason, protocol, new_state)
+                    _ -> Commons.error("Invalid message format", protocol, state)
                 end
             end
 
