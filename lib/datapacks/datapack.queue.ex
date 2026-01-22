@@ -15,9 +15,12 @@ defmodule ClusterChess.Datapacks.Queue do
 
     @impl Behaviour
     def enforce(data) do
-        struct = struct(__MODULE__, data)
-        ok? = struct |> Map.values() |> Enum.all?(&(!is_nil(&1)))
-        if ok?, do: {:ok, struct}, else: {:error, "Invalid datapack"}
+        values = struct(__MODULE__, data) |> Map.values()
+        if Enum.all?(values, fn v -> !is_nil(v) end) do
+            {:ok, struct(__MODULE__, data)}
+        else
+            {:error, "Invalid datapack"}
+        end
     end
 
     @impl Behaviour
