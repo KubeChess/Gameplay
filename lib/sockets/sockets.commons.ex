@@ -1,16 +1,5 @@
 defmodule ClusterChess.Sockets.Commons do
 
-    alias ClusterChess.Main.Validation
-
-    def parse(decoded, _module) do
-        case Validation.validate_token(decoded["token"]) do
-            :ok -> {:ok, decoded}
-            {:ok, _} -> {:ok, decoded}
-            {:error, reason} -> {:error, reason}
-            _generic_error -> {:error, "Unauthorized"}
-        end
-    end
-
     def delegate(module, name, msg) do
         case get_worker(module, name) |> GenServer.call(msg) do
             :ok -> {:ok, :ack}

@@ -2,6 +2,7 @@ defmodule ClusterChess.Sockets.Matchmaking do
 
     use ClusterChess.Sockets.Default
 
+    alias ClusterChess.Main.Validation
     alias ClusterChess.Sockets.Behaviour
     alias ClusterChess.Sockets.Commons
     alias ClusterChess.Services.Matchmaking
@@ -16,11 +17,11 @@ defmodule ClusterChess.Sockets.Matchmaking do
 
     @impl Behaviour
     def process(opcode, msg, state) when opcode in @opcodes do
-        with {:ok, data} <- Commons.parse(msg, Queue),
-             {:ok, req}  <- Queue.enforce(data),
-             {:ok, key}  <- Queue.getkey(req)
+        with {:ok, _auth} <- Validation.validate_token(msg["token"]),
+             {:ok, queue} <- Queue.enforce(msg),
+             {:ok, mmkey} <- Queue.getkey(queue)
         do
-            Commons.delegate(Matchmaking, key, req)
+            Commons.delegate(Matchmaking, mmkey, queue)
             {:ok, state, %{"msg" => "#{opcode}.ack"}}
         else
             {:error, reason} -> {:error, state, reason}
