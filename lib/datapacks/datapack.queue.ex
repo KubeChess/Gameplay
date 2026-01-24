@@ -28,9 +28,9 @@ defmodule ClusterChess.Datapacks.Queue do
 
     defp ranked_2str(flag) do
         ranked? = flag in ["true", "yes", "True", "Yes", true]
-        cond do
-            ranked? -> "ranked"
-            true -> "unranked"
+        case ranked? do
+            true -> "ranked"
+            false -> "unranked"
         end
     end
 end
