@@ -1,16 +1,23 @@
-defmodule ClusterChess.Datapack.Default do
+defmodule ClusterChess.Datapacks.Default do
     defmacro __using__(_opts) do
         quote do
-            @behaviour ClusterChess.Datapack.Behaviour
+            @behaviour ClusterChess.Datapacks.Behaviour
 
-            @impl ClusterChess.Datapack.Behaviour
+            @impl ClusterChess.Datapacks.Behaviour
             def enforce(data) do
-                module = unquote(__MODULE__)
-                values = struct(module, data) |> Map.values()
-                not_nil? = fn v -> !is_nil(v) end
-                if Enum.all?(values, not_nil?),
-                    do: {:ok, struct(module, data)},
-                    else: {:error, "Invalid datapack"}
+                keys = struct(__MODULE__, %{})
+                |> Map.keys()
+                |> Enum.map(&to_string/1)
+                |> Enum.filter(&(&1 != "__struct__"))
+
+                results = Enum.map(keys, fn k -> {k, data[k], is_nil(data[k])} end)
+                IO.inspect(results, label: "Key checks")
+
+                not_nil? = fn k -> !is_nil(data[k]) end
+
+                if Enum.all?(keys, not_nil?),
+                    do: {:ok, data},
+                    else: {:error, "Invalid Datapacks"}
             end
 
             defoverridable enforce: 1

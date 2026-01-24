@@ -1,4 +1,4 @@
-defmodule ClusterChess.Play.Queue do
+defmodule ClusterChess.Services.Matchmaking do
 
     use GenServer
 
@@ -25,4 +25,11 @@ defmodule ClusterChess.Play.Queue do
         IO.puts("Received message: #{inspect(message)} on node #{Node.self()}")
         {:noreply, state}
     end
+
+    @impl GenServer
+    def handle_call(request, _from, state) do
+    IO.puts("Received call: #{inspect(request)} on node #{Node.self()}")
+    {:reply, {:ok, request}, state}
+    end
+
 end

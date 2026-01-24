@@ -17,12 +17,14 @@ defmodule ClusterChess.Sockets.Matchmaking do
 
     @impl Behaviour
     def process(opcode, msg, state) when opcode in @opcodes do
+        IO.inspect(msg)
+        IO.inspect(Queue.enforce(msg))
         with {:ok, token} <- Map.fetch(msg, "token"),
              {:ok, _auth} <- Validation.validate_token(token),
              {:ok, queue} <- Queue.enforce(msg),
-             {:ok, mmkey} <- Queue.getkey(queue)
+             {:ok, mmqid} <- Queue.id(queue)
         do
-            Commons.delegate(Matchmaking, mmkey, queue)
+            Commons.delegate(Matchmaking, mmqid, queue)
             {:ok, state, %{"msg" => "#{opcode}.ack"}}
         else
             {:error, reason} -> {:error, state, reason}

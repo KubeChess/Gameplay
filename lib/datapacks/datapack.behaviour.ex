@@ -1,9 +1,9 @@
-defmodule ClusterChess.Datapack.Behaviour do
+defmodule ClusterChess.Datapacks.Behaviour do
 
     @type outcome()
         :: {:ok, struct()}
         |  {:error, String.t()}
 
-    @callback getkey(struct())   :: String.t()
-    @callback enforce(map())     :: outcome()
+    @callback id(struct()) :: String.t()
+    @callback enforce(map()) :: outcome()
 end
