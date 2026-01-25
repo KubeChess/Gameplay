@@ -7,10 +7,7 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
         msg = %{
             "type" => "queue.join",
             "token" => "Guest",
-            "rating" => "1500",
-            "preferred_color" => "white",
-            "required_color" => "none",
-            "ranked" => true,
+            "pool" => "ranked",
             "minutes" => "5",
             "increment" => "0"
         }

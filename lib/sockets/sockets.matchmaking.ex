@@ -7,7 +7,7 @@ defmodule ClusterChess.Sockets.Matchmaking do
     alias ClusterChess.Services.Matchmaking
     alias ClusterChess.Datapacks.Queue
 
-    @message_types ["queue.join", "queue.monitor", "queue.leave"]
+    @message_types ["queue.join", "queue.monitor", "queue.stop"]
 
     @impl WebSock
     def handle_in({message, [opcode: protocol]}, state) do
@@ -17,11 +17,19 @@ defmodule ClusterChess.Sockets.Matchmaking do
              {:ok, _indx} <- Enum.find_index(@message_types, &(&1 == mtype)),
              {:ok, _auth} <- Validation.validate_token(token),
              {:ok, queue} <- Queue.enforce(plain),
-             {:ok, mmqid} <- Queue.id(queue),
-             {:ok, _resp} <- Commons.delegate(Matchmaking, mmqid, queue)
+             {:ok, qguid} <- Queue.id(queue),
+             {:ok, _resp} <- Commons.delegate(Matchmaking, qguid, queue)
         do
+            prev_joined = Map.get(state, :joined_queues, [])
+            filterfunc = fn {queue_id, _datapack} -> queue_id != qguid end
+            joined_queues = case mtype do
+                "queue.stop" -> Enum.filter(prev_joined, filterfunc)
+                "queue.join" -> prev_joined ++ [{qguid, queue}]
+                _other_types -> prev_joined
+            end
+            new_state = Map.put(state, :joined_queues, joined_queues)
             Commons.encode!(%{ "msg" => "#{mtype}.ack" }, protocol)
-                |> Commons.resp(protocol, state)
+                |> Commons.resp(protocol, new_state)
         else
             {:error, reason} -> Commons.error(reason, protocol, state)
             _ -> Commons.error("Invalid message format", protocol, state)
@@ -29,7 +37,12 @@ defmodule ClusterChess.Sockets.Matchmaking do
     end
 
     @impl WebSock
-    def terminate(_reason, _state) do
-        :ok
+    def terminate(_reason, state) do
+        Map.get(state, :joined_queues, []) |> Enum.each(
+            fn {qguid, queue} ->
+                new = Map.put(queue, :type, "queue.stop")
+                Commons.delegate(Matchmaking, qguid, new)
+            end
+        )
     end
 end

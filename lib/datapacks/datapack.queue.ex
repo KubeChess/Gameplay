@@ -5,11 +5,9 @@ defmodule ClusterChess.Datapacks.Queue do
 
     @derive Jason.Encoder
     defstruct [
+        :type,
         :token,
-        :rating,
-        :preferred_color,
-        :required_color,
-        :ranked,
+        :pool,
         :minutes,
         :increment
     ]
@@ -18,19 +16,11 @@ defmodule ClusterChess.Datapacks.Queue do
     def id(self) do
         with {:ok, minutes}   <- Map.fetch(self, :minutes),
              {:ok, increment} <- Map.fetch(self, :increment),
-             {:ok, ranked}    <- Map.fetch(self, :ranked)
+             {:ok, pool}      <- Map.fetch(self, :pool)
         do
-            {:ok, "#{ranked_2str(ranked)}-#{minutes}+#{increment}"}
+            {:ok, "#{pool}-#{minutes}+#{increment}"}
         else
             _ -> {:error, "Missing key fields"}
-        end
-    end
-
-    defp ranked_2str(flag) do
-        ranked? = flag in ["true", "yes", "True", "Yes", true]
-        case ranked? do
-            true -> "ranked"
-            false -> "unranked"
         end
     end
 end
