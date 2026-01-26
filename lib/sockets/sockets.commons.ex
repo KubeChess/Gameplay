@@ -1,6 +1,12 @@
 defmodule ClusterChess.Sockets.Commons do
 
-    def delegate(module, opts, msg) do
+    def contains(list, item) do
+        if item in list,
+            do: {:ok, item},
+            else: {:error, "Unrecognized item: #{item}"}
+    end
+
+    def delegate(module, msg, opts) do
         case get_worker(module, opts) |> GenServer.call(msg) do
             :ok -> {:ok, :ack}
             {:ok, something} -> {:ok, something}

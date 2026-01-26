@@ -1,13 +1,7 @@
 defmodule ClusterChess.Services.Default do
-    defmacro __using__([registry: registry, initial_state: initial_state]) do
+    defmacro __using__(_opts) do
         quote do
             @behaviour GenServer
-
-            def start_link(name) do
-                IO.puts("Starting #{__MODULE__} with name #{name}")
-                GenServer.start_link(__MODULE__, unquote(initial_state), name:
-                    {:via, Horde.Registry, {unquote(registry), name}})
-            end
 
             @impl GenServer
             def init(state) do

@@ -1,8 +1,6 @@
 defmodule ClusterChess.Services.Gameplay do
 
-    use ClusterChess.Services.Default,
-        registry: :gameplay_registry,
-        initial_state: %{ games: [] }
+    use ClusterChess.Services.Default
 
     @impl GenServer
     def handle_call(request, from, state) do

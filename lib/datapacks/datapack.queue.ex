@@ -7,7 +7,8 @@ defmodule ClusterChess.Datapacks.Queue do
     defstruct [
         :type,
         :token,
-        :pool,
+        :elo,
+        :gamemode,
         :minutes,
         :increment
     ]
@@ -16,9 +17,9 @@ defmodule ClusterChess.Datapacks.Queue do
     def id(self) do
         with {:ok, minutes}   <- Map.fetch(self, :minutes),
              {:ok, increment} <- Map.fetch(self, :increment),
-             {:ok, pool}      <- Map.fetch(self, :pool)
+             {:ok, gamemode}      <- Map.fetch(self, :gamemode)
         do
-            {:ok, "#{pool}-#{minutes}+#{increment}"}
+            {:ok, "#{gamemode}-#{minutes}+#{increment}"}
         else
             _ -> {:error, "Missing key fields"}
         end

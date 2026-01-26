@@ -8,7 +8,7 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
             "type" => "queue.join",
             "token" => "Guest",
             "elo" => "1500",
-            "pool" => "ranked",
+            "gamemode" => "ranked",
             "minutes" => "5",
             "increment" => "0"
         }

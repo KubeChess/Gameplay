@@ -7,7 +7,8 @@ defmodule ClusterChess.Datapacks.Queue.Test do
         msg = %{
             "type" => "queue.join",
             "token" => "guest",
-            "pool" => "ranked",
+            "elo" => "1500",
+            "gamemode" => "ranked",
             "minutes" => "5",
             "increment" => "0"
         }
@@ -21,7 +22,8 @@ defmodule ClusterChess.Datapacks.Queue.Test do
         msg = %{
             type: "queue.join",
             token: "guest",
-            pool: "ranked",
+            elo: "1500",
+            gamemode: "ranked",
             minutes: "5",
             increment: "0"
         }
