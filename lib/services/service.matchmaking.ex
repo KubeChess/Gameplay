@@ -16,6 +16,7 @@ defmodule ClusterChess.Services.Matchmaking do
             {:"$1", :"$2", :"$3"}, [
                 {:is_map, :"$1"},
                 {:is_map_key, :elo, :"$1"},
+                {:is_map_key, :gamemode, :"$1"},
                 {:==, {:map_get, :gamemode, :"$1"}, gamemode},
                 {:>=, {:map_get, :elo, :"$1"}, min_elo},
                 {:<, {:map_get, :elo, :"$1"}, max_elo}
