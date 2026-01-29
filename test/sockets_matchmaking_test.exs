@@ -1,7 +1,7 @@
-defmodule ClusterChess.Sockets.Matchmaking.Test do
+defmodule ClusterChess.Matchmaking.Socket.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Sockets.Matchmaking
+    alias ClusterChess.Matchmaking.Socket
 
     test "Join Matchmaking Queue [success]" do
         msg = %{
@@ -13,7 +13,7 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
             "increment" => "0"
         }
         txt = Jason.encode!(msg)
-        result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
+        result = Socket.handle_in({txt, [opcode: :text]}, %{})
         ok_msg = %{"msg" => "queue.join.ack"} |> Jason.encode!()
         assert {:reply, :ok, {:text, ^ok_msg}, _state} = result
     end
@@ -23,13 +23,13 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
             "some" => "invalid data"
         }
         txt = Jason.encode!(msg)
-        result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
+        result = Socket.handle_in({txt, [opcode: :text]}, %{})
         assert {:reply, :ok, {:text, "{\"error\"" <> _rest}, _state} = result
     end
 
     test "Failed Matchmaking Queue [non-json string]" do
         txt = "some invalid data"
-        result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
+        result = Socket.handle_in({txt, [opcode: :text]}, %{})
         assert {:reply, :ok, {:text, "{\"error\"" <> _rest}, _state} = result
     end
 end

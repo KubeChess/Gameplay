@@ -1,7 +1,6 @@
-defmodule ClusterChess.Datapacks.DoMove do
+defmodule ClusterChess.Gameplay.DoMove do
 
-    use ClusterChess.Datapacks.Default
-    alias ClusterChess.Datapacks.Behaviour
+    use ClusterChess.Commons.Datapack
 
     @derive Jason.Encoder
     defstruct [
@@ -14,7 +13,7 @@ defmodule ClusterChess.Datapacks.DoMove do
         :promotion
     ]
 
-    @impl Behaviour
+    @impl ClusterChess.Commons.Datapack
     def id(self),
         do: self.move_count |>
           Integer.to_string()

@@ -1,7 +1,7 @@
-defmodule ClusterChess.Datapacks.Queue.Test do
+defmodule ClusterChess.Matchmaking.Queue.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Datapacks.Queue
+    alias ClusterChess.Matchmaking.Queue
 
     test "Parse Queue Datapacks [string keys -> atom keys]" do
         msg = %{

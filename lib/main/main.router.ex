@@ -4,7 +4,7 @@ defmodule ClusterChess.Main.Router do
 
     alias Plug.Conn
     alias ClusterChess.Sockets.Matchmaking
-    alias ClusterChess.Main.Validation
+    alias ClusterChess.Commons.Validation
 
     plug :match
     plug :dispatch

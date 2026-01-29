@@ -1,6 +1,6 @@
-defmodule ClusterChess.Services.Gameplay do
+defmodule ClusterChess.Gameplay.Tracker do
 
-    use ClusterChess.Services.Default
+    use ClusterChess.Commons.Service
 
     @impl GenServer
     def handle_call(datapack, from, state) do

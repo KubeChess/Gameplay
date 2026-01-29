@@ -1,6 +1,6 @@
-defmodule ClusterChess.Services.Matchmaking do
+defmodule ClusterChess.Matchmaking.Listener do
 
-    use ClusterChess.Services.Default
+    use ClusterChess.Commons.Service
 
     @registry :matchmaking_registry
     @initial_state %{ queue: [], matches: 0 }

@@ -1,10 +1,18 @@
-defmodule ClusterChess.Datapacks.Default do
+defmodule ClusterChess.Commons.Datapack do
+
+    @type outcome()
+        :: {:ok, struct()}
+        |  {:error, String.t()}
+
+    @callback id(struct()) :: String.t()
+    @callback enforce(map()) :: outcome()
+
     defmacro __using__(_opts) do
         quote do
-            @behaviour ClusterChess.Datapacks.Behaviour
+            @behaviour ClusterChess.Commons.Datapack
             import String, only: [to_atom: 1]
 
-            @impl ClusterChess.Datapacks.Behaviour
+            @impl ClusterChess.Commons.Datapack
             def enforce(data) do
                 atomic_data = atomize(data)
                 atomic_keys = atom_keys()

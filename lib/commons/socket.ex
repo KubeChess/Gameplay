@@ -1,4 +1,4 @@
-defmodule ClusterChess.Sockets.Default do
+defmodule ClusterChess.Commons.Socket do
     defmacro __using__(_opts) do
         quote do
             @behaviour WebSock

@@ -1,4 +1,4 @@
-defmodule ClusterChess.Main.Validation do
+defmodule ClusterChess.Commons.Validation do
 
     @signer Joken.Signer.create("HS256", System.get_env("JWT_SECRET"))
 

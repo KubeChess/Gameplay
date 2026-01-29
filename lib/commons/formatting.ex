@@ -1,4 +1,4 @@
-defmodule ClusterChess.Sockets.Commons do
+defmodule ClusterChess.Commons.Formatting do
 
     def contains(list, item) do
         if item in list,

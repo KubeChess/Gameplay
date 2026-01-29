@@ -1,7 +1,6 @@
-defmodule ClusterChess.Datapacks.Queue do
+defmodule ClusterChess.Matchmaking.Queue do
 
-    use ClusterChess.Datapacks.Default
-    alias ClusterChess.Datapacks.Behaviour
+    use ClusterChess.Commons.Datapack
 
     @derive Jason.Encoder
     defstruct [
@@ -13,7 +12,7 @@ defmodule ClusterChess.Datapacks.Queue do
         :increment
     ]
 
-    @impl Behaviour
+    @impl ClusterChess.Commons.Datapack
     def id(self) do
         with {:ok, minutes}   <- Map.fetch(self, :minutes),
              {:ok, increment} <- Map.fetch(self, :increment),
