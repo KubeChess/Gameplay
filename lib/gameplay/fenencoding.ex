@@ -9,8 +9,7 @@ defmodule ClusterChess.Gameplay.FenEncoding do
             end
             files |> Enum.chunk_by(& &1) |> Enum.map(&runlength/1) |> Enum.concat()
         end
-        fen = Enum.join(ranks, "/") |> String.trim_trailing()
-        fen <> " " <> char_to_turn(turn)
+        Enum.join(ranks, "/") <> " " <> char_to_turn(turn)
     end
 
     defp runlength([nil] ++ tail), do: [Integer.to_string(1 + length(tail))]
