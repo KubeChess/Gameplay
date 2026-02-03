@@ -7,14 +7,14 @@ defmodule ClusterChess.Gameplay.Validator do
             {:queen, _color}   -> valid_queen_move(board, from, to)
             {:rook, _color}    -> valid_rook_move(board, from, to)
             {:bishop, _color}  -> valid_bishop_move(board, from, to)
-            #{:pawn, _color}    -> valid_pawn_move(board, from, to)
-            #{:knight, _color} -> valid_pawn_move(board, from, to)
+            {:pawn, _color}    -> valid_pawn_move(board, from, to)
+            {:knight, _color}  -> valid_knight_move(board, from, to)
         end
     end
 
     def valid_king_move(board, {sf, sr}, {df, dr}) do
-        sf_int = hd(Atom.to_charlist(sf)) - ?a + 1
-        df_int = hd(Atom.to_charlist(df)) - ?a + 1
+        sf_int = hd(Atom.to_charlist(sf)) - ?a
+        df_int = hd(Atom.to_charlist(df)) - ?a
         {fdiff, rdiff} = {abs(sf_int - df_int), abs(sr - dr)}
         valid_queen_move(board, {sf, sr}, {df, dr}) and fdiff <= 1 and rdiff <= 1
     end
@@ -70,7 +70,53 @@ defmodule ClusterChess.Gameplay.Validator do
             {f, r} == {df, dr} or
             {f, r} == {sf, sr} or
             not Map.has_key?(board, {f, r})
-        end)
+        end) and length(path) > 1
+    end
+
+    def valid_pawn_move(board, {sf, sr}, {df, dr}) do
+        with {_piece, color} <- Map.get(board, {sf, sr}),
+             {_other, opponent_color} <- Map.get(board, {df, dr}, {nil, nil}),
+             {from, to} <- {{sf, sr}, {df, dr}},
+             sf_int <- hd(Atom.to_charlist(sf)) - ?a,
+             df_int <- hd(Atom.to_charlist(df)) - ?a,
+             true <- color == :white or sr > dr,
+             true <- color == :black or sr < dr,
+             true <- abs(sf_int - df_int) <= 1,
+             true <- abs(sr - dr) <= 2,
+             true <- {sf, sr} != {df, dr}
+        do
+            dest_clear = not Map.has_key?(board, to)
+            dest_enemy = opponent_color not in [nil, color]
+            vertical_diff = abs(sr - dr)
+            horizontal_diff = abs(sf_int - df_int)
+            case {vertical_diff, horizontal_diff, dest_clear} do
+                {1, 0, true}  -> dest_clear
+                {1, 1, false} -> dest_enemy
+                {2, 0, true}  -> dest_clear and valid_rook_move(board, from, to)
+                _ -> false
+            end
+        else
+            _ -> false
+        end
+    end
+
+    def valid_knight_move(board, {sf, sr}, {df, dr}) do
+        with {_piece, color} <- Map.get(board, {sf, sr}),
+             {_other, opponent} <- Map.get(board, {df, dr}, {nil, nil}),
+             sf_int <- hd(Atom.to_charlist(sf)) - ?a,
+             df_int <- hd(Atom.to_charlist(df)) - ?a
+        do
+            dest_ok = opponent != color
+            vertical_diff = abs(sr - dr)
+            horizontal_diff = abs(sf_int - df_int)
+            case {vertical_diff, horizontal_diff} do
+                {2, 1}  -> dest_ok
+                {1, 2}  -> dest_ok
+                _ -> false
+            end
+        else
+            _ -> false
+        end
     end
 
 end
