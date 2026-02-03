@@ -25,16 +25,15 @@ defmodule ClusterChess.Gameplay.Validator do
 
     def valid_rook_move(board, {sf, sr}, {df, dr}) do
         with {_piece, color1} <- Map.get(board, {sf, sr}, {nil, nil}),
-             {_piece, color2} <- Map.get(board, {df, dr}, {nil, nil}),
-             true <- color1 != color2 and color1 != nil,
-             true <- sf == df or sr == dr,
-             true <- {sf, sr} != {df, dr}
+        {_piece, color2} <- Map.get(board, {df, dr}, {nil, nil}),
+        true <- color1 != color2 and color1 != nil,
+        true <- sf == df or sr == dr,
+        true <- {sf, sr} != {df, dr}
         do
             sf_int = hd(Atom.to_charlist(sf)) - ?a
             df_int = hd(Atom.to_charlist(df)) - ?a
             valid_move_path(board, for f <- (sf_int .. df_int), r <- (sr .. dr) do
-                f_atom = List.to_atom([?a + f])
-                Map.get(board, {f_atom, r})
+                {List.to_atom([?a + f]), r}
             end)
         else
             _ -> false
@@ -55,8 +54,7 @@ defmodule ClusterChess.Gameplay.Validator do
             steps = abs(df_int - sf_int)
             valid_move_path(board, for i <- 0..steps do
                 f = List.to_atom([?a + sf_int + i * file_dir])
-                r = sr + i * rank_dir
-                Map.get(board, {f, r})
+                {f, sr + i * rank_dir}
             end)
         else
             _ -> false
@@ -64,6 +62,7 @@ defmodule ClusterChess.Gameplay.Validator do
     end
 
     def valid_move_path(board, path) do
+
         {sf, sr} = hd(path)
         {df, dr} = List.last(path)
         Enum.all?(path, fn {f, r} ->

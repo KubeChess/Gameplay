@@ -1,4 +1,4 @@
-defmodule ClusterChess.Matchmaking.Fen.Test do
+defmodule ClusterChess.Gameplay.Fen.Test do
 
     use ExUnit.Case
 
