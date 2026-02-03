@@ -7,7 +7,7 @@ defmodule ClusterChess.Gameplay.Validator do
             {:queen, _color}   -> valid_queen_move(board, from, to)
             {:rook, _color}    -> valid_rook_move(board, from, to)
             {:bishop, _color}  -> valid_bishop_move(board, from, to)
-            #{:pawn, _color}   -> valid_pawn_move(board, from, to)
+            #{:pawn, _color}    -> valid_pawn_move(board, from, to)
             #{:knight, _color} -> valid_pawn_move(board, from, to)
         end
     end
@@ -45,15 +45,21 @@ defmodule ClusterChess.Gameplay.Validator do
         with {_piece, color1} <- Map.get(board, {sf, sr}, {nil, nil}),
              {_piece, color2} <- Map.get(board, {df, dr}, {nil, nil}),
              true <- color1 != color2 and color1 != nil,
-             sf_int = hd(Atom.to_charlist(sf)) - ?a ,
+             sf_int = hd(Atom.to_charlist(sf)) - ?a,
              df_int = hd(Atom.to_charlist(df)) - ?a,
-             true <- (sf_int - df_int) == (sr - dr),
+             true <- abs(sf_int - df_int) == abs(sr - dr),
              true <- {sf, sr} != {df, dr}
         do
-            valid_move_path(board, for idx <- (sr .. dr) do
-                f_atom = List.to_atom([?a + idx])
-                Map.get(board, {f_atom, idx})
+            file_dir = if df_int > sf_int, do: 1, else: -1
+            rank_dir = if dr > sr, do: 1, else: -1
+            steps = abs(df_int - sf_int)
+            valid_move_path(board, for i <- 0..steps do
+                f = List.to_atom([?a + sf_int + i * file_dir])
+                r = sr + i * rank_dir
+                Map.get(board, {f, r})
             end)
+        else
+            _ -> false
         end
     end
 
@@ -63,7 +69,8 @@ defmodule ClusterChess.Gameplay.Validator do
         Enum.all?(path, fn {f, r} ->
             {f, r} == {df, dr} or
             {f, r} == {sf, sr} or
-            Map.has_key?(board, {f, r})
+            not Map.has_key?(board, {f, r})
         end)
     end
+
 end
