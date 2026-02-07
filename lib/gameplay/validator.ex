@@ -46,9 +46,9 @@ defmodule ClusterChess.Gameplay.Validator do
         vertical_diff = abs(sr - dr)
         horizontal_diff = abs(sf_int - df_int)
         case {vertical_diff, horizontal_diff} do
-            {2, 1}  -> valid_move_ends(board, {sf, sr}, {df, dr})
-            {1, 2}  -> valid_move_ends(board, {sf, sr}, {df, dr})
-            _ -> false
+            {2, 1} -> valid_move_ends(board, {sf, sr}, {df, dr})
+            {1, 2} -> valid_move_ends(board, {sf, sr}, {df, dr})
+            _other -> false
         end
     end
 
