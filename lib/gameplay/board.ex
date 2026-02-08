@@ -1,4 +1,4 @@
-defmodule Board do
+defmodule ClusterChess.Gameplay.Board do
     def color(board, pos) do
         case Map.get(board, pos) do
             nil -> nil

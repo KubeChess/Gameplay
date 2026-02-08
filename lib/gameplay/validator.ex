@@ -1,5 +1,7 @@
 defmodule ClusterChess.Gameplay.Validator do
 
+    alias ClusterChess.Gameplay.Board
+
     def validate_move(board, from, to) do
         case Map.get(board, from) do
             nil -> {:error, :no_piece_at_from}
