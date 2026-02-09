@@ -13,13 +13,13 @@ defmodule ClusterChess.Gameplay.Fen.Test do
             {:a, 1} => {:rook, :white},   {:b, 1} => {:knight, :white}, {:c, 1} => {:bishop, :white}, {:d, 1} => {:queen, :white},
             {:e, 1} => {:king, :white},   {:f, 1} => {:bishop, :white}, {:g, 1} => {:knight, :white}, {:h, 1} => {:rook, :white}
         }
-        fen = ClusterChess.Gameplay.FenEncoding.map_to_fen(board, :white)
+        fen = ClusterChess.Gameplay.Fen.map_to_fen(board, :white)
         assert fen == "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
     end
 
     test "FEN reverse to map for starting position" do
         fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
-        board = ClusterChess.Gameplay.FenDecoding.fen_to_map(fen)
+        board = ClusterChess.Gameplay.Fen.fen_to_map(fen)
         reference = %{
             {:a, 8} => {:rook, :black},   {:b, 8} => {:knight, :black}, {:c, 8} => {:bishop, :black}, {:d, 8} => {:queen, :black},
             {:e, 8} => {:king, :black},   {:f, 8} => {:bishop, :black}, {:g, 8} => {:knight, :black}, {:h, 8} => {:rook, :black},
