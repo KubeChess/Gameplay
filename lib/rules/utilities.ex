@@ -3,6 +3,25 @@ defmodule ClusterChess.Rules.Utilities do
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
     @ranks [1, 2, 3, 4, 5, 6, 7, 8]
 
+    alias ClusterChess.Rules.KingMoves
+    alias ClusterChess.Rules.QueenMoves
+    alias ClusterChess.Rules.RookMoves
+    alias ClusterChess.Rules.BishopMoves
+    alias ClusterChess.Rules.PawnMoves
+    alias ClusterChess.Rules.KnightMoves
+
+     def valid_move?(state, from, to) do
+        case Map.get(state.board, from) do
+            nil -> {:error, :no_piece_at_from}
+            {:king, _color}    -> KingMoves.valid_move?(state, from, to)
+            {:queen, _color}   -> QueenMoves.valid_move?(state, from, to)
+            {:rook, _color}    -> RookMoves.valid_move?(state, from, to)
+            {:bishop, _color}  -> BishopMoves.valid_move?(state, from, to)
+            {:pawn, _color}    -> PawnMoves.valid_move?(state, from, to)
+            {:knight, _color}  -> KnightMoves.valid_move?(state, from, to)
+        end
+    end
+
     def valid_move_ends?(state, {sf, sr}, {df, dr}) do
         {from, to} = {{sf, sr}, {df, dr}}
         {color1, color2} = color(state.board, from, to)
@@ -48,18 +67,9 @@ defmodule ClusterChess.Rules.Utilities do
         end
     end
 
-    def empty?(board, pos),
-        do: color(board, pos) == nil
-
-    def color(board, pos1, pos2),
-        do: {color(board, pos1), color(board, pos2)}
-
-    def intify(f),
-        do: hd(Atom.to_charlist(f)) - ?a
-
-    def intify(f1, f2),
-        do: {intify(f1), intify(f2)}
-
-    def direction(a, b),
-        do: (if a < b, do: 1, else: -1)
+    def empty?(board, pos), do: color(board, pos) == nil
+    def color(b, p1, p2), do: {color(b, p1), color(b, p2)}
+    def intify(f), do: hd(Atom.to_charlist(f)) - ?a
+    def intify(f1, f2), do: {intify(f1), intify(f2)}
+    def direction(a, b), do: (if a < b, do: 1, else: -1)
 end
