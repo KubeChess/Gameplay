@@ -1,14 +1,14 @@
 defmodule ClusterChess.Rules.Utilities do
 
-    @files [:a, :b, :c, :d, :e, :f, :g, :h]
-    @ranks [1, 2, 3, 4, 5, 6, 7, 8]
-
     alias ClusterChess.Rules.KingMoves
     alias ClusterChess.Rules.QueenMoves
     alias ClusterChess.Rules.RookMoves
     alias ClusterChess.Rules.BishopMoves
     alias ClusterChess.Rules.PawnMoves
     alias ClusterChess.Rules.KnightMoves
+
+    @files [:a, :b, :c, :d, :e, :f, :g, :h]
+    @ranks [1, 2, 3, 4, 5, 6, 7, 8]
 
     def valid_move?(state, from, to) do
         case Map.get(state.board, from) do
