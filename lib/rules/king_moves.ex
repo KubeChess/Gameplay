@@ -6,9 +6,12 @@ defmodule ClusterChess.Rules.KingMoves do
         do: valid_push_or_capture?(state, from, to)
         or  valid_castling?(state, from, to)
 
+    def valid_straight_move_or_diagonal_move?(state, from, to),
+        do: Utilities.valid_straight_move?(state, from, to)
+        or  Utilities.valid_diagonal_move?(state, from, to)
+
     def valid_push_or_capture?(state, from, to),
-        do: (Utilities.valid_straight_move?(state, from, to)
-        or  Utilities.valid_diagonal_move?(state, from, to))
+        do: valid_straight_move_or_diagonal_move?(state, from, to)
         and horizontal_distance(from, to) in [0, 1]
         and vertical_distance(from, to) in [0, 1]
 
@@ -33,15 +36,11 @@ defmodule ClusterChess.Rules.KingMoves do
         end
     end
 
-    def safe_castling_path?(state, {sf, sr}, extension, {df, dr}) do
-        {sf_int, df_int} = Utilities.intify(sf, df)
-        path = for f <- (sf_int .. df_int), r <- (sr .. dr), do: {List.to_atom([?a + f]), r}
-        king_color = Utilities.color(state.board, {sf, sr})
-
-        enemies = for {enemy, {_, color}} <- state.board,
-            color not in [nil, king_color], do: enemy
-
-        Utilities.valid_straight_move?(state, {sf, sr}, extension)
+    def safe_castling_path?(state, from, extension, to) do
+        king_color = Utilities.color(state.board, from)
+        path = Utilities.path(from, to)
+        enemies = Utilities.enemies(state, king_color)
+        Utilities.valid_straight_move?(state, from, extension)
         and Enum.all?(for king <- path, enemy <- enemies,
             do: not Utilities.valid_move?(state, enemy, king)
         )
