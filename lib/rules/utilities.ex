@@ -60,7 +60,6 @@ defmodule ClusterChess.Rules.Utilities do
         end
     end
 
-
     def opponent(:white), do: :black
     def opponent(:black), do: :white
     def both_colors(b, p1, p2), do: {color(b, p1), color(b, p2)}
