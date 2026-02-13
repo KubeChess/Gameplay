@@ -1,26 +1,7 @@
 defmodule ClusterChess.Rules.Utilities do
 
-    alias ClusterChess.Rules.KingMoves
-    alias ClusterChess.Rules.QueenMoves
-    alias ClusterChess.Rules.RookMoves
-    alias ClusterChess.Rules.BishopMoves
-    alias ClusterChess.Rules.PawnMoves
-    alias ClusterChess.Rules.KnightMoves
-
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
     @ranks [1, 2, 3, 4, 5, 6, 7, 8]
-
-    def valid_move?(state, from, to) do
-        case Map.get(state.board, from) do
-            nil -> {:error, :no_piece_at_from}
-            {:king, _color}    -> KingMoves.valid_move?(state, from, to)
-            {:queen, _color}   -> QueenMoves.valid_move?(state, from, to)
-            {:rook, _color}    -> RookMoves.valid_move?(state, from, to)
-            {:bishop, _color}  -> BishopMoves.valid_move?(state, from, to)
-            {:pawn, _color}    -> PawnMoves.valid_move?(state, from, to)
-            {:knight, _color}  -> KnightMoves.valid_move?(state, from, to)
-        end
-    end
 
     def valid_move_ends?(state, {sf, sr}, {df, dr}) do
         {from, to} = {{sf, sr}, {df, dr}}

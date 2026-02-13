@@ -1,7 +1,7 @@
 defmodule ClusterChess.Gameplay.Tracker do
 
     use ClusterChess.Commons.Service
-    alias ClusterChess.Gameplay.Validation
+    alias ClusterChess.Rules.State
 
     @impl GenServer
     def handle_call(datapack, from, state) do
@@ -53,15 +53,9 @@ defmodule ClusterChess.Gameplay.Tracker do
     end
 
     defp handle_move(req, state) do
-        after_move = state.board
-            |> Map.put(req.to, Map.get(state.board, req.from))
-            |> Map.delete(req.from)
-        new_turn = if state.turn == state.white_player,
-            do: state.black_player,
-            else: state.white_player
-        case Validation.validate_move(state.board, req.from, req.to) do
-            true -> {:ok, %{state | board: after_move, turn: new_turn}}
-            {:error, reason} -> {:fatal, reason}
+        case State.apply_move(state, req.from, req.to) do
+            :invalid_move -> {:fatal, "invalid move"}
+            new_state -> {:ok, new_state}
         end
     end
 

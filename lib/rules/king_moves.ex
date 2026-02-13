@@ -1,5 +1,6 @@
 defmodule ClusterChess.Rules.KingMoves do
 
+    alias ClusterChess.Rules.State
     alias ClusterChess.Rules.Utilities
 
     def valid_move?(state, from, to),
@@ -36,7 +37,7 @@ defmodule ClusterChess.Rules.KingMoves do
         enemies = Utilities.enemies(state, king_color)
         Utilities.valid_straight_move?(state, from, extension)
         and Enum.all?(for king <- path, enemy <- enemies,
-            do: not Utilities.valid_move?(state, enemy, king)
+            do: not State.valid_move?(state, enemy, king)
         )
     end
 
