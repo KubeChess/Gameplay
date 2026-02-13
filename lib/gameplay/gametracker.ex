@@ -1,7 +1,7 @@
 defmodule ClusterChess.Gameplay.Tracker do
 
     use ClusterChess.Commons.Service
-    alias ClusterChess.Rules.State
+    alias ClusterChess.Rules.Board
 
     @impl GenServer
     def handle_call(datapack, from, state) do
@@ -15,7 +15,7 @@ defmodule ClusterChess.Gameplay.Tracker do
     defp notify_spectators(state) do
         spectators = Map.get(state, :spectators, MapSet.new())
         Enum.each(spectators, fn spectator ->
-            send(spectator, {:forward, Jason.encode!(state.board)})
+            send(spectator, {:forward, Jason.encode!(state.squares)})
         end)
     end
 
@@ -30,7 +30,7 @@ defmodule ClusterChess.Gameplay.Tracker do
     defp process(type, req, state) do
         state = update_spectators(state, req["from"])
         {white, black} = {state.white_player, state.black_player}
-        turn = if state.turn == :white,
+        turn = if state.board.turn == :white,
             do: state.white_player,
             else: state.black_player
         out = case {req["uid"], type} do
@@ -53,7 +53,7 @@ defmodule ClusterChess.Gameplay.Tracker do
     end
 
     defp handle_move(req, state) do
-        case State.apply_move(state, req.from, req.to) do
+        case Board.apply_move(state.board, req.from, req.to) do
             :invalid_move -> {:fatal, "invalid move"}
             new_state -> {:ok, new_state}
         end

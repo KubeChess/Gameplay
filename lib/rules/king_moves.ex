@@ -1,6 +1,6 @@
 defmodule ClusterChess.Rules.KingMoves do
 
-    alias ClusterChess.Rules.State
+    alias ClusterChess.Rules.Board
     alias ClusterChess.Rules.Utilities
 
     def valid_move?(state, from, to),
@@ -21,7 +21,7 @@ defmodule ClusterChess.Rules.KingMoves do
         and valid_castling_ends?(state, from, to)
 
     def valid_castling_path?(state, from, to) do
-        {piece, color} = Map.get(state.board, from, {nil, nil})
+        {piece, color} = Map.get(state.squares, from, {nil, nil})
         case {piece, color, to} do
             {:king, :white, {:c, 1}} -> safe_castling_path?(state, from, {:b, 1}, to)
             {:king, :white, {:g, 1}} -> safe_castling_path?(state, from, {:f, 1}, to)
@@ -32,17 +32,17 @@ defmodule ClusterChess.Rules.KingMoves do
     end
 
     def safe_castling_path?(state, from, extension, to) do
-        king_color = Utilities.color(state.board, from)
+        king_color = Utilities.color(state.squares, from)
         path = Utilities.path(from, to)
         enemies = Utilities.enemies(state, king_color)
         Utilities.valid_straight_move?(state, from, extension)
         and Enum.all?(for king <- path, enemy <- enemies,
-            do: not State.valid_move?(state, enemy, king)
+            do: not Board.valid_move?(state, enemy, king)
         )
     end
 
     def valid_castling_ends?(state, from, to) do
-        {piece, color} = Map.get(state.board, from, {nil, nil})
+        {piece, color} = Map.get(state.squares, from, {nil, nil})
         case {piece, color, to} do
             {:king, :white, {:c, 1}} -> state.castling_rights.white_queenside
             {:king, :white, {:g, 1}} -> state.castling_rights.white_kingside

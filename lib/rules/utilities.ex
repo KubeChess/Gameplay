@@ -5,7 +5,7 @@ defmodule ClusterChess.Rules.Utilities do
 
     def valid_move_ends?(state, {sf, sr}, {df, dr}) do
         {from, to} = {{sf, sr}, {df, dr}}
-        {color1, color2} = color(state.board, from, to)
+        {color1, color2} = both_colors(state.squares, from, to)
         color1 != color2 and color1 != nil and
         sf in @files and df in @files and
         sr in @ranks and dr in @ranks
@@ -18,7 +18,7 @@ defmodule ClusterChess.Rules.Utilities do
         valid_move_ends?(state, from, to) and
         Enum.all?(path, fn {f, r} ->
             {f, r} in [{df, dr}, {sf, sr}]
-            or not Map.has_key?(state.board, {f, r})
+            or not Map.has_key?(state.squares, {f, r})
         end)
     end
 
@@ -30,7 +30,7 @@ defmodule ClusterChess.Rules.Utilities do
     end
 
     def enemies(state, friendly_color) do
-        for {enemy, {_, color}} <- state.board,
+        for {enemy, {_, color}} <- state.squares,
             color not in [nil, friendly_color], do: enemy
     end
 
@@ -60,10 +60,13 @@ defmodule ClusterChess.Rules.Utilities do
         end
     end
 
+
+    def opponent(:white), do: :black
+    def opponent(:black), do: :white
+    def both_colors(b, p1, p2), do: {color(b, p1), color(b, p2)}
     def horizontal_distance({sf, _}, {df, _}), do: abs(intify(sf) - intify(df))
     def vertical_distance({_, sr}, {_, dr}), do: abs(sr - dr)
     def empty?(board, pos), do: color(board, pos) == nil
-    def color(b, p1, p2), do: {color(b, p1), color(b, p2)}
     def intify(f), do: hd(Atom.to_charlist(f)) - ?a
     def intify(f1, f2), do: {intify(f1), intify(f2)}
     def direction(a, b), do: (if a < b, do: 1, else: -1)
