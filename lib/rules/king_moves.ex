@@ -24,6 +24,8 @@ defmodule ClusterChess.Rules.KingMoves do
     def valid_castling?(state, from, to),
         do: valid_castling_path?(state, from, to)
         and valid_castling_ends?(state, from, to)
+        and Map.get(state.squares, from) != nil
+        and Map.get(state.squares, from) |> elem(0) == :king
 
     def valid_castling_path?(state, from, to) do
         {piece, color} = Map.get(state.squares, from, {nil, nil})

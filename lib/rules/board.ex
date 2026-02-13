@@ -47,12 +47,12 @@ defmodule ClusterChess.Rules.Board do
         {piece, color} = Map.get(state.squares, from, {nil, nil})
         rights = state.castling_rights
         new_rights = case {piece, color, from} do
-            {:king, :white, {:e, 1}} -> %{rights | black_lx: false, black_sx: false}
-            {:rook, :white, {:a, 1}} -> %{rights | white_lx: false}
-            {:rook, :white, {:h, 1}} -> %{rights | white_sx: false}
-            {:king, :black, {:e, 8}} -> %{rights | white_lx: false, white_sx: false}
-            {:rook, :black, {:a, 8}} -> %{rights | black_lx: false}
-            {:rook, :black, {:h, 8}} -> %{rights | black_sx: false}
+            {:king, :white, {:e, 1}} -> %{rights | white_kingside: false, white_queenside: false}
+            {:rook, :white, {:a, 1}} -> %{rights | white_queenside: false}
+            {:rook, :white, {:h, 1}} -> %{rights | white_kingside: false}
+            {:king, :black, {:e, 8}} -> %{rights | black_kingside: false, black_queenside: false}
+            {:rook, :black, {:a, 8}} -> %{rights | black_queenside: false}
+            {:rook, :black, {:h, 8}} -> %{rights | black_kingside: false}
             _ -> rights
         end
         %{state | castling_rights: new_rights}
@@ -61,8 +61,8 @@ defmodule ClusterChess.Rules.Board do
     def apply_move(state, from, to) do
         cond do
             Utilities.color(state.squares, from) != state.turn -> :invalid_move
-            KingMoves.valid_castling?(state, from, to) -> apply_castling(state, from, to)
             PawnMoves.valid_en_passant?(state, from, to) -> apply_en_passant(state, from, to)
+            KingMoves.valid_castling?(state, from, to) -> apply_castling(state, from, to)
             valid_move?(state, from, to) -> apply_normal_move(state, from, to)
             true -> :invalid_move
         end
@@ -88,12 +88,13 @@ defmodule ClusterChess.Rules.Board do
 
     def apply_normal_move(state, from, to) do
         piece = Map.get(state.squares, from)
-        new_board = state.squares
+        new_squares = state.squares
         |> Map.delete(from)
         |> Map.put(to, piece)
         opponent = Utilities.opponent(state.turn)
-        %{state | board: new_board, turn: opponent}
-        |> update_en_passant_target(from, to)
+        update_en_passant_target(state, from, to)
         |> update_castling_rights(from, to)
+        |> Map.put(:squares, new_squares)
+        |> Map.put(:turn, opponent)
     end
 end

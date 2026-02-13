@@ -33,6 +33,8 @@ defmodule ClusterChess.Rules.PawnMoves do
         and state.en_passant_target in bilateral_increments(state, from, {1, 0})
         and Utilities.color(state.squares, to) == nil
         and state.en_passant_target != nil
+        and Map.get(state.squares, from) != nil
+        and Map.get(state.squares, from) |> elem(0) == :pawn
 
     defp starting_rank?(:white, {_file, r}), do: r == 2
     defp starting_rank?(:black, {_file, r}), do: r == 7
