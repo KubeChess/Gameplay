@@ -89,4 +89,26 @@ defmodule ClusterChess.Rules.Board.Test do
         assert out.castling_rights.black_queenside == true
     end
 
+    test "board move ok [wrong turn, white turn, but black is moving]" do
+        squares = %{ {:a, 7} => {:pawn, :black} }
+        state = %{
+            squares: squares,
+            turn: :white,
+            en_passant_target: nil,
+            castling_rights: @full_castling_rights
+        }
+        assert Board.apply_move(state, {:a, 7}, {:a, 6}) == :invalid_move
+    end
+
+    test "board move ok [black's turn, check turn after move]" do
+        squares = %{ {:a, 7} => {:pawn, :black} }
+        state = %{
+            squares: squares,
+            turn: :black,
+            en_passant_target: nil,
+            castling_rights: @full_castling_rights
+        }
+        assert Board.apply_move(state, {:a, 7}, {:a, 6}) != :invalid_move
+        assert Board.apply_move(state, {:a, 7}, {:a, 6}).turn == :white
+    end
 end
