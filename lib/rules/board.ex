@@ -81,15 +81,15 @@ defmodule ClusterChess.Rules.Board do
     def king_status(board, color) do
         legal_moves = all_legal_moves(board, color)
         in_check? = king_in_check?(board, color)
-        case {legal_moves, in_check?} do
-            {[], true}  -> :checkmate
-            {[], false} -> :stalemate
-            {mvs, true} -> checkmate?(board, color, mvs)
+        can_move = all_moves_bring_to_check?(board, color, legal_moves)
+        case {can_move, in_check?} do
+            {true, true}  -> :checkmate
+            {true, false} -> :stalemate
             _some_other -> :safe
         end
     end
 
-    def checkmate?(board, color, all_legal_moves) do
+    defp all_moves_bring_to_check?(board, color, all_legal_moves) do
         Enum.all?(all_legal_moves, fn {from, to} ->
             new_board = MakeMoves.apply_move(board, from, to)
             valid? = (new_board != :invalid_move)
