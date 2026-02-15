@@ -81,8 +81,8 @@ defmodule ClusterChess.Rules.Board do
     def king_status(board, color) do
         legal_moves = all_legal_moves(board, color)
         in_check? = king_in_check?(board, color)
-        can_move = all_moves_bring_to_check?(board, color, legal_moves)
-        case {can_move, in_check?} do
+        all_checks = all_moves_bring_to_check?(board, color, legal_moves)
+        case {all_checks, in_check?} do
             {true, true}  -> :checkmate
             {true, false} -> :stalemate
             _some_other -> :safe
