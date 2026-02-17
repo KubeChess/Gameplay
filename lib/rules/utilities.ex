@@ -24,13 +24,13 @@ defmodule ClusterChess.Rules.Utilities do
 
     def path({sf, sr}, {df, dr}) do
         {sf_int, df_int} = intify(sf, df)
-        for f <- (sf_int .. df_int), r <- (sr .. dr),
+        for f <- range(sf_int, df_int), r <- range(sr, dr),
             do: {List.to_atom([?a + f]), r}
     end
 
     def valid_straight_move?(state, {sf, sr}, {df, dr}) do
         {sf_int, df_int} = intify(sf, df)
-        path = for f <- (sf_int .. df_int), r <- (sr .. dr) do
+        path = for f <- range(sf_int, df_int), r <- range(sr, dr) do
             {List.to_atom([?a + f]), r}
         end
         straight? = sf == df or sr == dr
@@ -71,4 +71,5 @@ defmodule ClusterChess.Rules.Utilities do
     def intify(f), do: hd(Atom.to_charlist(f)) - ?a
     def intify(f1, f2), do: {intify(f1), intify(f2)}
     def direction(a, b), do: (if a < b, do: 1, else: -1)
+    def range(a, b), do: Range.new(a, b, direction(a, b))
 end

@@ -1,8 +1,14 @@
 defmodule ClusterChess.Rules.CheckMates.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Rules.MakeMoves
     alias ClusterChess.Rules.Board
+
+    @full_castling_rights %{
+        white_kingside:  true,
+        white_queenside: true,
+        black_kingside:  true,
+        black_queenside: true
+    }
 
     test "board move ok [checkmate by knight]" do
         squares = %{
