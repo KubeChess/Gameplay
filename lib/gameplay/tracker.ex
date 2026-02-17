@@ -27,10 +27,8 @@ defmodule ClusterChess.Gameplay.Tracker do
             else: state.black_player
         out = case {req["uid"], type} do
             {^turn, "game.domove"}  -> State.apply_move(state, req)
-            {^white, "game.undo"}   -> State.apply_undo(state, req)
             {^white, "game.draw"}   -> State.apply_draw(state, req)
             {^white, "game.resign"} -> State.apply_resign(state, req)
-            {^black, "game.undo"}   -> State.apply_undo(state, req)
             {^black, "game.draw"}   -> State.apply_draw(state, req)
             {^black, "game.resign"} -> State.apply_resign(state, req)
             {_any, "game.spectate"} -> {:ok, req["uid"]}

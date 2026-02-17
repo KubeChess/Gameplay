@@ -51,7 +51,7 @@ defmodule ClusterChess.Gameplay.State do
         cond do
             out == :invalid_move       -> {:error, "invalid move"}
             state.ending.winner != nil -> {:error, "game already over"}
-            player_timed_out?(state)   -> {:error, "player timed out"}
+            game_timed_out?(state)     -> {:error, "player timed out"}
             true -> {:ok, %{state |
                 board:   out,
                 history: state.history ++ [log],
@@ -73,10 +73,22 @@ defmodule ClusterChess.Gameplay.State do
         end
     end
 
-    def apply_undo(_state, _req), do: :temporary_stub
-    def apply_draw(_state, _req), do: :temporary_stub
+    def apply_draw(state, req) do
+        white_player = state.players.white
+        black_player = state.players.black
+        draw_req_ack = %{ state | pending: %{ offer_type: :draw, requester: req.uid } }
+        draw_accept = %{ state | pending: @nopending, ending: @stalemate }
+        cond do
+            req.uid not in [white_player, black_player] -> {:error, "forbidden: not a player"}
+            state.ending.winner != nil -> {:error, "game already over"}
+            state.pending.offer_type == nil -> {:ok, draw_req_ack }
+            state.pending.offer_type != :draw -> {:ok, draw_req_ack }
+            state.pending.requester != req.uid -> {:ok, draw_accept}
+            true -> {:error, "invalid draw offer"}
+        end
+    end
 
-    defp player_timed_out?(state) do
+    defp game_timed_out?(state) do
         now = DateTime.utc_now() |> DateTime.to_unix()
         white_timeout = state.clock.white_timeout_treshold
         black_timeout = state.clock.black_timeout_treshold
@@ -88,7 +100,7 @@ defmodule ClusterChess.Gameplay.State do
     end
 
     defp player_timed_out?(state, player),
-        do: player_timed_out?(state)
+        do: game_timed_out?(state)
         and state.board.turn == player
 
     defp update_clock(state, req) do
