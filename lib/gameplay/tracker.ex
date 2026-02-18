@@ -4,8 +4,8 @@ defmodule ClusterChess.Gameplay.Tracker do
     alias ClusterChess.Gameplay.State
 
     @impl GenServer
-    def handle_call(datapack, from, state) do
-        request = Map.merge(datapack, %{ :from => from })
+    def handle_call(datapack, sender, state) do
+        request = Map.merge(datapack, %{ :sender => sender })
         case Map.fetch(request, :type) do
             {:ok, mtype} -> process(mtype, request, state)
             _ -> {:reply, :fatal, state}
@@ -32,7 +32,7 @@ defmodule ClusterChess.Gameplay.Tracker do
     end
 
     defp process(type, req, state) do
-        state = update_spectators(state, req.from)
+        state = update_spectators(state, req.sender)
         {white, black} = {state.players.white, state.players.black}
         turn = if state.board.turn == :white,
             do: state.players.white,
@@ -44,7 +44,7 @@ defmodule ClusterChess.Gameplay.Tracker do
             {^black, "game.draw"}   -> State.apply_draw(state, req)
             {^black, "game.resign"} -> State.apply_resign(state, req)
             {_any, "game.spectate"} -> {:ok, state}
-            _unrecognized_msg_type  -> {:fatal, "unrecognized msg"}
+            _unrecognized_msg_type  -> {:error, "unrecognized_msg_type"}
         end
         with {:ok, new_state} <- out do
             notify_spectators(new_state)
