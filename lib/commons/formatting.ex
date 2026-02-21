@@ -9,12 +9,25 @@ defmodule KubeChess.Commons.Formatting do
 
     def enforce(shapes, data, key) do
         case Map.fetch(shapes, key) do
-            {:ok, shape} -> shape.enforce(data)
+            {:ok, shape} -> enforce(shape, data)
             _ -> {:error, "Unrecognized shape: #{key}"}
         end
     end
 
-    def atomize(module, data) do
+    defp enforce(shape, data) do
+        atomic_data = atomize(shape, data)
+        atomic_keys = atom_keys(shape)
+        contained? = fn key ->
+            Map.has_key?(atomic_data, key) and
+            not is_nil(Map.get(atomic_data, key))
+        end
+        case Enum.all?(atomic_keys, contained?) do
+            true  -> {:ok, atomic_data}
+            false -> {:error, "Invalid Datapack"}
+        end
+    end
+
+    defp atomize(module, data) do
         keys = string_keys(module) ++ atom_keys(module)
         filtered = Map.take(data, keys)
         for {k, v} <- filtered, into: %{} do
@@ -22,10 +35,10 @@ defmodule KubeChess.Commons.Formatting do
         end
     end
 
-    def string_keys(x),
+    defp string_keys(x),
         do: atom_keys(x) |> Enum.map(&to_string/1)
 
-    def atom_keys(module) do
+    defp atom_keys(module) do
         struct(module, %{})
         |> Map.keys()
         |> Enum.filter(&(&1 != :__struct__))

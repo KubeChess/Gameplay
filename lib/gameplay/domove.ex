@@ -1,7 +1,5 @@
 defmodule KubeChess.Gameplay.DoMove do
 
-    use KubeChess.Commons.Datapack
-
     @derive Jason.Encoder
     defstruct [
         :type,
@@ -12,9 +10,4 @@ defmodule KubeChess.Gameplay.DoMove do
         :to,
         :promotion
     ]
-
-    @impl KubeChess.Commons.Datapack
-    def id(self),
-        do: self.move_count |>
-          Integer.to_string()
 end
