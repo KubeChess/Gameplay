@@ -5,11 +5,11 @@ defmodule KubeChess.Gameplay.State do
     alias KubeChess.Rules.Board
     alias KubeChess.Rules.Utilities
 
-    @nopending %{ offer_type: nil, requester: nil }
-    @noending %{ winner: nil, reason: nil }
-    @white_resign %{ winner: :black, reason: :resignation }
-    @black_resign %{ winner: :white, reason: :resignation }
-    @stalemate %{ winner: :both, reason: :stalemate }
+    @nopending    %{ offer_type: nil, requester: nil       }
+    @noending     %{ winner: nil,     reason: nil          }
+    @white_resign %{ winner: :black,  reason: :resignation }
+    @black_resign %{ winner: :white,  reason: :resignation }
+    @stalemate    %{ winner: :both,   reason: :stalemate   }
 
     @starting_fen_string "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
     @starting_position Fen.fen_to_map(@starting_fen_string)
