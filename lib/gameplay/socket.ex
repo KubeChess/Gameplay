@@ -1,6 +1,6 @@
 defmodule KubeChess.Gameplay.Socket do
 
-    use KubeChess.Commons.Socket
+    @behaviour WebSock
 
     alias KubeChess.Commons.Formatting
     alias KubeChess.Commons.Messaging
@@ -13,6 +13,18 @@ defmodule KubeChess.Gameplay.Socket do
         "game.resign" => KubeChess.Gameplay.Communication,
         "game.spectate" => KubeChess.Gameplay.Communication
     }
+
+    @impl WebSock
+    def init(state) do
+        case state do
+            %{user_id: _user_id} -> {:ok, state}
+            _ -> {:error, "Invalid initial state"}
+        end
+    end
+
+    @impl WebSock
+    def handle_in({_msg, [opcode: protocol]}, state)
+        when (protocol not in [:text, :binary]), do: {:ok, state}
 
     @impl WebSock
     def handle_in({message, [opcode: protocol]}, state) do
@@ -29,4 +41,12 @@ defmodule KubeChess.Gameplay.Socket do
             msg -> Formatting.error("Invalid msg: #{inspect(msg)}", protocol, state)
         end
     end
+
+    @impl WebSock
+    def handle_info({:forward, message}, state),
+        do: {:reply, :ok, {:text, message}, state}
+
+    @impl WebSock
+    def handle_info(_message, _state),
+        do: {:error, "Rejected: Not listening for this message"}
 end

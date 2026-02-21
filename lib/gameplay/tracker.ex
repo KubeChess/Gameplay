@@ -1,7 +1,13 @@
 defmodule KubeChess.Gameplay.Tracker do
 
-    use KubeChess.Commons.Service
+    @behaviour GenServer
+
     alias KubeChess.Gameplay.State
+
+    @impl GenServer
+    def init(state) do
+        {:ok, state}
+    end
 
     @impl GenServer
     def handle_call(datapack, sender, state) do
@@ -10,25 +16,6 @@ defmodule KubeChess.Gameplay.Tracker do
             {:ok, mtype} -> process(mtype, request, state)
             _ -> {:reply, :fatal, state}
         end
-    end
-
-    def notify_spectators(state) do
-        players = Map.get(state, :players, Map.new())
-        spectators = Map.get(players, :spectators, MapSet.new())
-        Enum.each(spectators, fn spectator ->
-            send(spectator, {:game_update, state})
-        end)
-    end
-
-    def update_spectators(state, {pid, _ref}),
-        do: update_spectators(state, pid)
-
-    def update_spectators(state, from) do
-        update_in(state.players.spectators, fn set ->
-            old = set || MapSet.new()
-            expansion = MapSet.new([from])
-            MapSet.union(old, expansion)
-        end)
     end
 
     defp process(type, req, state) do
@@ -52,5 +39,21 @@ defmodule KubeChess.Gameplay.Tracker do
         else
             err -> {:reply, err, state}
         end
+    end
+
+    defp notify_spectators(state) do
+        players = Map.get(state, :players, Map.new())
+        spectators = Map.get(players, :spectators, MapSet.new())
+        Enum.each(spectators, fn spectator ->
+            send(spectator, {:game_update, state})
+        end)
+    end
+
+    defp update_spectators(state, {sender_pid, _ref}) do
+        update_in(state.players.spectators, fn set ->
+            old = set || MapSet.new()
+            expansion = MapSet.new([sender_pid])
+            MapSet.union(old, expansion)
+        end)
     end
 end
