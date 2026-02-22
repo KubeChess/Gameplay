@@ -26,7 +26,7 @@ defmodule Match.Tracker do
         turn = if state.board.turn == :white,
             do: state.players.white,
             else: state.players.black
-        out = case {req.uid, type} do
+        out = case {req.user, type} do
             {^turn, "game.domove"}  -> DoMove.update_state(state, req)
             {^white, "game.draw"}   -> Draw.update_state(state, req)
             {^white, "game.resign"} -> Resign.update_state(state, req)

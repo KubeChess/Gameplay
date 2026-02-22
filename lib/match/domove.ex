@@ -26,10 +26,9 @@ defmodule Match.DoMove do
 
     defp preliminary_check(state, req) do
         both_players = [state.players.white, state.players.black]
-        fullmove_count = state.board.counters.fullmove
+        fullmove_count = state.board.counters.fullmoves
         cond do
             req.user not in both_players -> {:error, "forbidden: not a player"}
-            req.user != state.board.turn -> {:error, "forbidden: not your turn"}
             req.count != fullmove_count  -> {:error, "corrupted: wrong move count"}
             true -> {:ok, state}
         end

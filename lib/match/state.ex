@@ -58,10 +58,10 @@ defmodule Match.State do
         end
     end
 
-    def player_color(state, uid) do
+    def player_color(state, user) do
         cond do
-            state.players.white == uid -> :white
-            state.players.black == uid -> :black
+            state.players.white == user -> :white
+            state.players.black == user -> :black
             true -> nil
         end
     end
