@@ -27,11 +27,11 @@ defmodule KubeChess.Match.Tracker do
             do: state.players.white,
             else: state.players.black
         out = case {req.uid, type} do
-            {^turn, "game.domove"}  -> DoMove.apply_move(state, req)
-            {^white, "game.draw"}   -> Draw.apply_draw(state, req)
-            {^white, "game.resign"} -> Resign.apply_resign(state, req)
-            {^black, "game.draw"}   -> Draw.apply_draw(state, req)
-            {^black, "game.resign"} -> Resign.apply_resign(state, req)
+            {^turn, "game.domove"}  -> DoMove.update_state(state, req)
+            {^white, "game.draw"}   -> Draw.update_state(state, req)
+            {^white, "game.resign"} -> Resign.update_state(state, req)
+            {^black, "game.draw"}   -> Draw.update_state(state, req)
+            {^black, "game.resign"} -> Resign.update_state(state, req)
             {_any, "game.spectate"} -> {:ok, state}
             _unrecognized_msg_type  -> {:error, "unrecognized_msg_type"}
         end

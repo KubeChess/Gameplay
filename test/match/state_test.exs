@@ -8,22 +8,22 @@ defmodule KubeChess.Match.State.Test do
     @initial_state State.new(
         60 * 10,          # 10 minutes
         5,                # 5 seconds increment
-        "white_player",   # white player uid
-        "black_player"    # black player uid
+        "white_player",   # white player user-id
+        "black_player"    # black player user-id
     )
 
     @example_first_move_req %{
         type: "game.domove",
         from: {:e, 2},
         to: {:e, 4},
-        uid: "white_player"
+        user: "white_player"
     }
 
     @example_second_move_req %{
         type: "game.domove",
         from: {:e, 7},
         to: {:e, 5},
-        uid: "black_player"
+        user: "black_player"
     }
 
     test "State ok [correctly handles first move]" do

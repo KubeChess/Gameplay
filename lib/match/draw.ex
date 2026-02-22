@@ -1,31 +1,32 @@
 defmodule KubeChess.Match.Draw do
 
+    alias KubeChess.Match.State
+
     @stalemate    %{ winner: :both,   reason: :stalemate }
     @nopending    %{ offer_type: nil, requester: nil     }
 
     @derive Jason.Encoder
     defstruct [
+        :user,
         :type,
-        :token,
         :game,
-        :count,
-        :from,
-        :to,
-        :promotion
+        :count
     ]
 
-    def apply_draw(state, req) do
-        white_player = state.players.white
-        black_player = state.players.black
-        draw_req_ack = %{ state | pending: %{ offer_type: :draw, requester: req.uid } }
-        draw_accept = %{ state | pending: @nopending, ending: @stalemate }
-        cond do
-            req.uid not in [white_player, black_player] -> {:error, "forbidden: not a player"}
-            state.ending.winner != nil -> {:error, "game already over"}
-            state.pending.offer_type == nil -> {:ok, draw_req_ack }
-            state.pending.offer_type != :draw -> {:ok, draw_req_ack }
-            state.pending.requester != req.uid -> {:ok, draw_accept}
-            true -> {:error, "invalid draw offer"}
-        end
+    def update_state(state, req) do
+        State.update_state(state, fn state ->
+            white_player = state.players.white
+            black_player = state.players.black
+            draw_req_ack = %{ state | pending: %{ offer_type: :draw, requester: req.user } }
+            draw_accept = %{ state | pending: @nopending, ending: @stalemate }
+            cond do
+                req.user not in [white_player, black_player] -> {:error, "forbidden: not a player"}
+                state.ending.winner != nil -> {:error, "game already over"}
+                state.pending.offer_type == nil -> {:ok, draw_req_ack }
+                state.pending.offer_type != :draw -> {:ok, draw_req_ack }
+                state.pending.requester != req.user -> {:ok, draw_accept}
+                true -> {:error, "invalid draw offer"}
+            end
+        end)
     end
 end

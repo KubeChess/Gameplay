@@ -4,20 +4,19 @@ defmodule KubeChess.Match.Resign do
 
     @derive Jason.Encoder
     defstruct [
+        :user,
         :type,
-        :token,
         :game,
-        :count,
-        :from,
-        :to,
-        :promotion
+        :count
     ]
 
-    def apply_resign(state, req) do
-        case State.player_color(state, req.user) do
-            nil -> {:error, "invalid resignation"}
-            :white -> {:ok, %{state | ending: %{ winner: :black, reason: :resign }}}
-            :black -> {:ok, %{state | ending: %{ winner: :white, reason: :resign }}}
-        end
+    def update_state(state, req) do
+        State.update_state(state, fn state ->
+            case State.player_color(state, req.user) do
+                :white -> {:ok, %{state | ending: %{ winner: :black, reason: :resign }}}
+                :black -> {:ok, %{state | ending: %{ winner: :white, reason: :resign }}}
+                nil    -> {:error, "invalid resignation"}
+            end
+        end)
     end
 end
