@@ -8,6 +8,10 @@ defmodule Game.PawnMoves do
         Enum.filter(ms, fn to -> valid_move?(board, from, to) end)
     end
 
+    def valid_final_push?(board, from, to),
+        do: valid_single_push?(board, from, to)
+        and (to |> elem(1)) in [1, 8]
+
     def valid_move?(state, from, to),
         do: valid_push_or_capture_or_en_passant?(state, from, to)
         and Map.get(state.squares, from) != nil

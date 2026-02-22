@@ -17,7 +17,8 @@ defmodule Match.State.Test do
         from: {:e, 2},
         to: {:e, 4},
         user: "white_player",
-        count: 1
+        count: 1,
+        promotion: nil
     }
 
     @example_second_move_req %{
@@ -25,7 +26,8 @@ defmodule Match.State.Test do
         from: {:e, 7},
         to: {:e, 5},
         user: "black_player",
-        count: 1
+        count: 1,
+        promotion: nil
     }
 
     test "State ok [correctly handles first move]" do

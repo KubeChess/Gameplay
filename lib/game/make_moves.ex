@@ -10,10 +10,21 @@ defmodule Game.MakeMoves do
     def apply_move(board, from, to, promotion \\ nil) do
         cond do
             Utilities.color(board.squares, from) != board.turn -> :invalid_move
+            PawnMoves.valid_final_push?(board, from, to) -> apply_promotion(board, from, to, promotion)
             PawnMoves.valid_en_passant?(board, from, to) -> apply_en_passant(board, from, to)
             KingMoves.valid_castling?(board, from, to) -> apply_castling(board, from, to)
             Board.valid_move?(board, from, to) -> apply_normal_move(board, from, to)
             true -> :invalid_move
+        end
+    end
+
+    def apply_promotion(board, from, to, promotion) do
+        board = MakeUpdates.update_all(board, from, to)
+        color = Utilities.color(board.squares, from)
+        squares = %{ board.squares | from => nil, to => {promotion, color} }
+        cond do
+            promotion not in [:queen, :rook, :bishop, :knight] -> :invalid_move
+            true -> %{ board | squares: squares }
         end
     end
 
