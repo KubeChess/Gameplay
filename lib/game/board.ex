@@ -29,9 +29,9 @@ defmodule Game.Board do
         },
         castling_rights: %{
             white_lx: true,
-            white_sx: true,
+            white_rx: true,
             black_lx: true,
-            black_sx: true
+            black_rx: true
         },
         counters: %{
             halfmoves: 0,

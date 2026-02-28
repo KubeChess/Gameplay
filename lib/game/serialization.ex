@@ -39,9 +39,9 @@ defmodule Game.Serialization do
     end
 
     defp encode_castling_rights(board),
-        do: if(board.castling_rights.white_sx, do: "K", else: "")
+        do: if(board.castling_rights.white_rx, do: "K", else: "")
         <>  if(board.castling_rights.white_lx, do: "Q", else: "")
-        <>  if(board.castling_rights.black_sx, do: "k", else: "")
+        <>  if(board.castling_rights.black_rx, do: "k", else: "")
         <>  if(board.castling_rights.black_lx, do: "q", else: "")
 
     defp runlength([nil] ++ tail), do: [Integer.to_string(1 + length(tail))]

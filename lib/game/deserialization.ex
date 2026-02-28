@@ -34,9 +34,9 @@ defmodule Game.Deserialization do
     defp decode_castling_rights(castling) do
         %{
             white_lx: String.contains?(castling, "Q"),
-            white_sx: String.contains?(castling, "K"),
+            white_rx: String.contains?(castling, "K"),
             black_lx: String.contains?(castling, "q"),
-            black_sx: String.contains?(castling, "k")
+            black_rx: String.contains?(castling, "k")
         }
     end
 
