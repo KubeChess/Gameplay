@@ -1,6 +1,6 @@
 defmodule Match.DoMove do
 
-    alias Game.MakeMoves
+    alias Game.Board
     alias Game.Utilities
     alias Match.State
 
@@ -23,7 +23,7 @@ defmodule Match.DoMove do
             fullmove_count = state.board.counters.fullmoves
             player_color = State.player_color(state, req.user)
             piece_color = Utilities.color(state.board.squares, req.from)
-            new_board = MakeMoves.apply_move(state.board, req.from, req.to, req.promotion)
+            new_board = Board.apply_move!(state.board, req.from, req.to, req.promotion)
             cond do
                 req.user not in both_players -> {:error, "forbidden: not a player"}
                 player_color != state.board.turn -> {:error, "forbidden: not your turn"}

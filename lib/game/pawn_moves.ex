@@ -1,6 +1,27 @@
 defmodule Game.PawnMoves do
 
     alias Game.Utilities
+    alias Game.MakeUpdates
+
+    def promote!(board, from, to, promotion \\ :pawn),
+        do: apply_move!(board, from, to)
+        |>  Map.put(to, {promotion, Utilities.color(board, to)})
+
+    def apply_move!(board, from, to),
+        do: capture_en_passant_target(board, to)
+        |>  MakeUpdates.update_en_passant_target(from, to)
+        |>  MakeUpdates.update_fullmoves_counter(from, to)
+        |>  MakeUpdates.update_halfmoves_counter(from, to)
+        |>  MakeUpdates.update_current_turn()
+        |>  MakeUpdates.update_squares_after_move(from, to)
+
+    defp capture_en_passant_target(board, to) do
+        target = Utilities.shift(board, to, {0, 1})
+        case board.en_passant_target == to do
+            true -> %{ board | squares: Map.put(board.squares, target, nil) }
+            false -> board
+        end
+    end
 
     def legal_moves(board, from) do
         ms = for x <- -1..1, y <- 1..2, do:

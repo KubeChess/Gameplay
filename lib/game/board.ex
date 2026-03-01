@@ -6,7 +6,7 @@ defmodule Game.Board do
     alias Game.BishopMoves
     alias Game.PawnMoves
     alias Game.KnightMoves
-    alias Game.MakeMoves
+    alias Game.Utilities
 
     defstruct [
         squares: %{
@@ -67,6 +67,21 @@ defmodule Game.Board do
         end
     end
 
+    def apply_move!(board, from, to, promotion \\ nil) do
+        squares = board.squares
+        cond do
+            Utilities.color(squares, from) != board.turn -> :invalid_move
+            BishopMoves.valid_move?(board, from, to)     -> BishopMoves.apply_move!(board, from, to)
+            QueenMoves.valid_move?(board, from, to)      -> QueenMoves.apply_move!(board, from, to)
+            KnightMoves.valid_move?(board, from, to)     -> KnightMoves.apply_move!(board, from, to)
+            KingMoves.valid_move?(board, from, to)       -> KingMoves.apply_move!(board, from, to)
+            PawnMoves.valid_final_push?(board, from, to) -> PawnMoves.promote!(board, from, to, promotion)
+            PawnMoves.valid_move?(board, from, to)       -> PawnMoves.apply_move!(board, from, to)
+            RookMoves.valid_move?(board, from, to)       -> RookMoves.apply_move!(board, from, to)
+            true -> :invalid_move
+        end
+    end
+
     def all_legal_moves(state, target_color) do
         for {square, {_, piece_color}} <- state.squares,
             target_color == piece_color,
@@ -112,7 +127,7 @@ defmodule Game.Board do
 
     defp all_moves_bring_to_check?(board, color, all_legal_moves) do
         Enum.all?(all_legal_moves, fn {from, to} ->
-            new_board = MakeMoves.apply_move(board, from, to)
+            new_board = apply_move!(board, from, to)
             valid? = (new_board != :invalid_move)
             valid? and king_in_check?(new_board, color)
         end)

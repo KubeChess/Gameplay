@@ -2,6 +2,28 @@ defmodule Game.KingMoves do
 
     alias Game.Board
     alias Game.Utilities
+    alias Game.MakeUpdates
+
+    def apply_move!(board, from, to),
+        do: MakeUpdates.update_king_location(board, from, to)
+        |>  update_rooks_positions_before_castling(from, to)
+        |>  MakeUpdates.update_castling_rights(from, to)
+        |>  MakeUpdates.update_en_passant_target(from, to)
+        |>  MakeUpdates.update_fullmoves_counter(from, to)
+        |>  MakeUpdates.update_halfmoves_counter(from, to)
+        |>  MakeUpdates.update_current_turn()
+        |>  MakeUpdates.update_squares_after_move(from, to)
+
+    defp update_rooks_positions_before_castling(board, from, to) do
+        {_piece, color} = Map.get(board.squares, from, {nil, nil})
+        case {color, to} do
+            {:white, {:c, 1}} -> MakeUpdates.update_squares_after_move(board, {:a, 1}, {:d, 1})
+            {:white, {:g, 1}} -> MakeUpdates.update_squares_after_move(board, {:h, 1}, {:f, 1})
+            {:black, {:c, 8}} -> MakeUpdates.update_squares_after_move(board, {:a, 8}, {:d, 8})
+            {:black, {:g, 8}} -> MakeUpdates.update_squares_after_move(board, {:h, 8}, {:f, 8})
+            _ -> board
+        end
+    end
 
     def legal_moves(board, from) do
         castlings = [{:c, 1}, {:g, 1}, {:c, 8}, {:g, 8}]

@@ -61,4 +61,14 @@ defmodule Game.MakeUpdates do
             _ -> board
         end
     end
+
+    def update_current_turn(board),
+        do: Map.put(board, :turn, Utilities.opponent_color(board.turn))
+
+    def update_squares_after_move(board, from, to) do
+        piece = Map.get(board.squares, from)
+        squares = Map.put(board.squares, to, piece)
+            |> Map.delete(from)
+        %{ board | squares: squares }
+    end
 end

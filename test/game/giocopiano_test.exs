@@ -1,7 +1,5 @@
 defmodule Game.GiocoPiano.Test do
     use ExUnit.Case
-
-    alias Game.MakeMoves
     alias Game.Board
 
     @white_can_castle     %{ white_lx: true, white_rx: true }
@@ -54,31 +52,31 @@ defmodule Game.GiocoPiano.Test do
         assert Board.king_status(board, :white) == :safe
         assert board.turn == :white
 
-        m1 = MakeMoves.apply_move(board, {:e, 2}, {:e, 4})
+        m1 = Board.apply_move!(board, {:e, 2}, {:e, 4})
         assert_expected_postmove_situation(m1, :black)
         assert m1.en_passant_target == {:e, 3}
 
-        m2 = MakeMoves.apply_move(m1, {:e, 7}, {:e, 5})
+        m2 = Board.apply_move!(m1, {:e, 7}, {:e, 5})
         assert_expected_postmove_situation(m2, :white)
         assert m2.en_passant_target == {:e, 6}
 
-        m3 = MakeMoves.apply_move(m2, {:g, 1}, {:f, 3})
+        m3 = Board.apply_move!(m2, {:g, 1}, {:f, 3})
         assert_expected_postmove_situation(m3, :black)
         assert m3.en_passant_target == nil
 
-        m4 = MakeMoves.apply_move(m3, {:g, 8}, {:f, 6})
+        m4 = Board.apply_move!(m3, {:g, 8}, {:f, 6})
         assert_expected_postmove_situation(m4, :white)
         assert m4.en_passant_target == nil
 
-        m5 = MakeMoves.apply_move(m4, {:f, 1}, {:c, 4})
+        m5 = Board.apply_move!(m4, {:f, 1}, {:c, 4})
         assert_expected_postmove_situation(m5, :black)
         assert m5.en_passant_target == nil
 
-        m6 = MakeMoves.apply_move(m5, {:b, 8}, {:c, 6})
+        m6 = Board.apply_move!(m5, {:b, 8}, {:c, 6})
         assert_expected_postmove_situation(m6, :white)
         assert m6.en_passant_target == nil
 
-        m7 = MakeMoves.apply_move(m6, {:e, 1}, {:g, 1})
+        m7 = Board.apply_move!(m6, {:e, 1}, {:g, 1})
         assert m7.en_passant_target == nil
         assert m7.white_king_location == {:g, 1}
         assert m7.squares[{:f, 1}] == {:rook, :white}
