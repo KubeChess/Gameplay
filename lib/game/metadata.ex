@@ -1,6 +1,6 @@
-defmodule Game.MakeUpdates do
+defmodule Game.MetaData do
 
-    alias Game.Utilities
+    alias Game.Squares
 
     def update_all(board, from, to),
         do: board
@@ -9,7 +9,7 @@ defmodule Game.MakeUpdates do
         |>  update_en_passant_target(from, to)
         |>  update_castling_rights(from, to)
         |>  update_king_location(from, to)
-        |>  Map.put(:turn, Utilities.opponent_color(board.turn))
+        |>  Map.put(:turn, Squares.opponent_color(board.turn))
 
     def update_halfmoves_counter(board, from, to) do
         {piece, _color} = Map.get(board.squares, from, {nil, nil})
@@ -29,8 +29,8 @@ defmodule Game.MakeUpdates do
     def update_en_passant_target(board, from, to) do
         square = Map.get(board.squares, from, {nil, nil})
         piece = elem(square, 0)
-        distance = Utilities.vertical_distance(from, to)
-        target = Utilities.shift(board, from, {0, 1})
+        distance = Squares.vertical_distance(from, to)
+        target = Squares.shift(board, from, {0, 1})
         case {piece, distance} do
             {:pawn, 2}  -> %{board | en_passant_target: target}
             {:pawn, -2} -> %{board | en_passant_target: target}
@@ -63,7 +63,7 @@ defmodule Game.MakeUpdates do
     end
 
     def update_current_turn(board),
-        do: Map.put(board, :turn, Utilities.opponent_color(board.turn))
+        do: Map.put(board, :turn, Squares.opponent_color(board.turn))
 
     def update_squares_after_move(board, from, to) do
         piece = Map.get(board.squares, from)

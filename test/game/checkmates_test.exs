@@ -1,7 +1,7 @@
 defmodule Game.CheckMates.Test do
     use ExUnit.Case
 
-    alias Game.Board
+    alias Game.Utilities
 
     @full_castling_rights %{
         white_lx:  true,
@@ -27,7 +27,7 @@ defmodule Game.CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Board.king_status(state, :white) == :checkmate
+        assert Utilities.king_status(state, :white) == :checkmate
     end
 
     test "board move ok [stalemate by double rook]" do
@@ -45,7 +45,7 @@ defmodule Game.CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Board.king_status(state, :white) == :stalemate
+        assert Utilities.king_status(state, :white) == :stalemate
     end
 
     test "board move ok [safe because you can capture the rook]" do
@@ -62,7 +62,7 @@ defmodule Game.CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Board.king_status(state, :white) == :safe
+        assert Utilities.king_status(state, :white) == :safe
     end
 
     test "board move ok [safe because you can push the pawn]" do
@@ -81,6 +81,6 @@ defmodule Game.CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Board.king_status(state, :white) == :safe
+        assert Utilities.king_status(state, :white) == :safe
     end
 end

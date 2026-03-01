@@ -1,22 +1,22 @@
 defmodule Game.PawnMoves do
 
-    alias Game.Utilities
-    alias Game.MakeUpdates
+    alias Game.MetaData
+    alias Game.Squares
 
     def promote!(board, from, to, promotion \\ :pawn),
         do: apply_move!(board, from, to)
-        |>  Map.put(to, {promotion, Utilities.color(board, to)})
+        |>  Map.put(to, {promotion, Squares.color(board, to)})
 
     def apply_move!(board, from, to),
         do: capture_en_passant_target(board, to)
-        |>  MakeUpdates.update_en_passant_target(from, to)
-        |>  MakeUpdates.update_fullmoves_counter(from, to)
-        |>  MakeUpdates.update_halfmoves_counter(from, to)
-        |>  MakeUpdates.update_current_turn()
-        |>  MakeUpdates.update_squares_after_move(from, to)
+        |>  MetaData.update_en_passant_target(from, to)
+        |>  MetaData.update_fullmoves_counter(from, to)
+        |>  MetaData.update_halfmoves_counter(from, to)
+        |>  MetaData.update_current_turn()
+        |>  MetaData.update_squares_after_move(from, to)
 
     defp capture_en_passant_target(board, to) do
-        target = Utilities.shift(board, to, {0, 1})
+        target = Squares.shift(board, to, {0, 1})
         case board.en_passant_target == to do
             true -> %{ board | squares: Map.put(board.squares, target, nil) }
             false -> board
@@ -25,7 +25,7 @@ defmodule Game.PawnMoves do
 
     def legal_moves(board, from) do
         ms = for x <- -1..1, y <- 1..2, do:
-            Utilities.shift(board, from, {x, y})
+            Squares.shift(board, from, {x, y})
         Enum.filter(ms, fn to -> valid_move?(board, from, to) end)
     end
 
@@ -45,24 +45,24 @@ defmodule Game.PawnMoves do
         or  valid_en_passant?(state, from, to)
 
     def valid_single_push?(state, from, to),
-        do: Utilities.shift(state, from, {0, 1}) == to
-        and Utilities.empty?(state.squares, to)
+        do: Squares.shift(state, from, {0, 1}) == to
+        and Squares.empty?(state.squares, to)
 
     def valid_double_push?(state, from, to),
-        do: Utilities.shift(state, from, {0, 2}) == to
-        and starting_rank?(Utilities.color(state.squares, from), from)
-        and Utilities.empty?(state.squares, Utilities.shift(state, from, {0, 1}))
-        and Utilities.empty?(state.squares, Utilities.shift(state, from, {0, 2}))
+        do: Squares.shift(state, from, {0, 2}) == to
+        and starting_rank?(Squares.color(state.squares, from), from)
+        and Squares.empty?(state.squares, Squares.shift(state, from, {0, 1}))
+        and Squares.empty?(state.squares, Squares.shift(state, from, {0, 2}))
 
     def valid_capture?(state, from, to),
         do: to in bilateral_increments(state, from, {1, 1})
-        and Utilities.color(state.squares, to) != Utilities.color(state.squares, from)
-        and Utilities.color(state.squares, to) != nil
+        and Squares.color(state.squares, to) != Squares.color(state.squares, from)
+        and Squares.color(state.squares, to) != nil
 
     def valid_en_passant?(state, from, to),
         do: to in bilateral_increments(state, from, {1, 1})
         and state.en_passant_target in bilateral_increments(state, from, {1, 0})
-        and Utilities.color(state.squares, to) == nil
+        and Squares.color(state.squares, to) == nil
         and state.en_passant_target != nil
         and Map.get(state.squares, from) != nil
         and Map.get(state.squares, from) |> elem(0) == :pawn
@@ -71,7 +71,7 @@ defmodule Game.PawnMoves do
     defp starting_rank?(:black, {_file, r}), do: r == 7
 
     defp bilateral_increments(state, {f, r}, {x, y}), do: [
-        Utilities.shift(state, {f, r}, {x, y}),
-        Utilities.shift(state, {f, r}, {-x, y})
+        Squares.shift(state, {f, r}, {x, y}),
+        Squares.shift(state, {f, r}, {-x, y})
     ]
 end

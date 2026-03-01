@@ -4,7 +4,7 @@ defmodule Match.FullGame.Test do
 
     alias Match.DoMove
     alias Match.State
-    alias Game.Utilities
+    alias Game.Squares
 
     @initial_state State.new(
         60 * 10,          # 10 minutes
@@ -15,7 +15,7 @@ defmodule Match.FullGame.Test do
 
     def get_move_request(state, from, to) do
       current_color = state.board.turn
-      opponent_color = Utilities.opponent_color(current_color)
+      opponent_color = Squares.opponent_color(current_color)
       opponent_player = State.player_user_id(state, opponent_color)
       %{
             type: "game.domove",

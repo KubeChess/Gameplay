@@ -1,5 +1,6 @@
 defmodule Match.State do
 
+    alias Game.Squares
     alias Bandit.Clock
     alias Game.Board
     alias Match.Clock
@@ -45,10 +46,10 @@ defmodule Match.State do
     end
 
     def update_ending(state) do
-        {color, opponent} = { state.board.turn, Utilities.opponent_color(state.board.turn) }
+        {color, opponent} = { state.board.turn, Squares.opponent_color(state.board.turn) }
         checkmate_ending = %{ state.ending | winner: color, reason: :checkmate }
         timeout_ending = %{ state.ending | winner: opponent, reason: :timeout }
-        king_status = Board.king_status(state.board, color)
+        king_status = Utilities.king_status(state.board, color)
         cond do
             Clock.player_timed_out?(state, color) -> timeout_ending
             king_status == :checkmate -> checkmate_ending

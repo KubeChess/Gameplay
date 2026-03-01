@@ -1,21 +1,22 @@
 defmodule Game.QueenMoves do
 
-    alias Game.Utilities
-    alias Game.MakeUpdates
+    alias Game.BasicMoves
+    alias Game.MetaData
+    alias Game.Squares
 
     def apply_move!(board, from, to),
         do: board
-        |>  MakeUpdates.update_en_passant_target(from, to)
-        |>  MakeUpdates.update_fullmoves_counter(from, to)
-        |>  MakeUpdates.update_halfmoves_counter(from, to)
-        |>  MakeUpdates.update_current_turn()
-        |>  MakeUpdates.update_squares_after_move(from, to)
+        |>  MetaData.update_en_passant_target(from, to)
+        |>  MetaData.update_fullmoves_counter(from, to)
+        |>  MetaData.update_halfmoves_counter(from, to)
+        |>  MetaData.update_current_turn()
+        |>  MetaData.update_squares_after_move(from, to)
 
     def legal_moves(board, from) do
-        hz = for x <- -7..7, do: Utilities.shift(board, from, {x, 0})
-        vt = for y <- -7..7, do: Utilities.shift(board, from, {0, y})
-        d1 = for z <- -7..7, do: Utilities.shift(board, from, {z, z})
-        d2 = for z <- -7..7, do: Utilities.shift(board, from, {z, -z})
+        hz = for x <- -7..7, do: Squares.shift(board, from, {x, 0})
+        vt = for y <- -7..7, do: Squares.shift(board, from, {0, y})
+        d1 = for z <- -7..7, do: Squares.shift(board, from, {z, z})
+        d2 = for z <- -7..7, do: Squares.shift(board, from, {z, -z})
         moves = hz ++ vt ++ d1 ++ d2
         Enum.filter(moves, fn to -> valid_move?(board, from, to) end)
     end
@@ -26,6 +27,6 @@ defmodule Game.QueenMoves do
         and Map.get(state.squares, from) |> elem(0) == :queen
 
     def valid_straight_move_or_diagonal_move?(state, from, to),
-        do: Utilities.valid_straight_move?(state, from, to)
-        or  Utilities.valid_diagonal_move?(state, from, to)
+        do: BasicMoves.valid_straight_move?(state, from, to)
+        or  BasicMoves.valid_diagonal_move?(state, from, to)
 end

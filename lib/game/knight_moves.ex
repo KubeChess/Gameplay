@@ -1,25 +1,26 @@
 defmodule Game.KnightMoves do
 
-    alias Game.Utilities
-    alias Game.MakeUpdates
+    alias Game.Squares
+    alias Game.MetaData
+    alias Game.BasicMoves
 
     def apply_move!(board, from, to),
         do: board
-        |>  MakeUpdates.update_en_passant_target(from, to)
-        |>  MakeUpdates.update_fullmoves_counter(from, to)
-        |>  MakeUpdates.update_halfmoves_counter(from, to)
-        |>  MakeUpdates.update_current_turn()
-        |>  MakeUpdates.update_squares_after_move(from, to)
+        |>  MetaData.update_en_passant_target(from, to)
+        |>  MetaData.update_fullmoves_counter(from, to)
+        |>  MetaData.update_halfmoves_counter(from, to)
+        |>  MetaData.update_current_turn()
+        |>  MetaData.update_squares_after_move(from, to)
 
     def legal_moves(board, from) do
         ms = for x <- -2..2, y <- -2..2, x != y, x != 0, y != 0, do:
-            Utilities.shift(board, from, {x, y})
+            Squares.shift(board, from, {x, y})
         Enum.filter(ms, fn to -> valid_move?(board, from, to) end)
     end
 
     def valid_move?(board, from, to),
         do: both_distances(from, to) in [{1, 2}, {2, 1}]
-        and Utilities.valid_move_ends?(board, from, to)
+        and BasicMoves.valid_move_ends?(board, from, to)
         and Map.get(board.squares, from) != nil
         and Map.get(board.squares, from) |> elem(0) == :knight
 
@@ -29,7 +30,7 @@ defmodule Game.KnightMoves do
     }
 
     defp horizontal_distance({sf, _}, {df, _}),
-        do: abs(Utilities.intify(sf) - Utilities.intify(df))
+        do: abs(Squares.intify(sf) - Squares.intify(df))
 
     defp vertical_distance({_, sr}, {_, dr}),
         do: abs(sr - dr)
