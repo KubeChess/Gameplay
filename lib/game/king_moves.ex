@@ -1,7 +1,6 @@
 defmodule Game.KingMoves do
 
     alias Game.Board
-    alias Game.Utilities
     alias Game.MetaData
     alias Game.Squares
     alias Game.Utilities

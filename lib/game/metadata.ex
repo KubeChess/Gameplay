@@ -2,15 +2,6 @@ defmodule Game.MetaData do
 
     alias Game.Squares
 
-    def update_all(board, from, to),
-        do: board
-        |>  update_halfmoves_counter(from, to)
-        |>  update_fullmoves_counter(from, to)
-        |>  update_en_passant_target(from, to)
-        |>  update_castling_rights(from, to)
-        |>  update_king_location(from, to)
-        |>  Map.put(:turn, Squares.opponent_color(board.turn))
-
     def update_halfmoves_counter(board, from, to) do
         {piece, _color} = Map.get(board.squares, from, {nil, nil})
         pawn_move? = piece == :pawn
